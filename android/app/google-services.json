@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "354602260291",
+    "project_id": "om-appcart",
+    "storage_bucket": "om-appcart.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:354602260291:android:ff25028b26a9f375d181f6",
+        "android_client_info": {
+          "package_name": "com.appcart.om_appcart"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClX5mRpSR2eqnyxjd1LPryErHI3XSMz4g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
