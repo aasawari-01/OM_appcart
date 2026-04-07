@@ -1,4 +1,3 @@
-import 'package:intl/intl.dart';
 import 'package:om_appcart/controller/station_controller.dart';
 import 'package:get/get.dart';
 
@@ -142,10 +141,6 @@ const List<Map<String, dynamic>> staffComplaintCategories = [
 ];
 final List<String> staffComplaintCategoriesValue = staffComplaintCategories.map((e) => e['value'] as String).toList();
 
-// Example utility function: formatDate
-String formatDate(DateTime date) {
-  return DateFormat('dd MM yyyy').format(date);
-}
 
 
 // Example: calculateDateDifference

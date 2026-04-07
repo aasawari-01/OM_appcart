@@ -9,7 +9,7 @@ import '../../../view/widgets/custom_app_bar.dart';
 import '../../../view/widgets/skeleton_loader.dart';
 import 'finalize_found_lost_items_screen.dart';
 
-import 'package:intl/intl.dart';
+import '../../../utils/app_date_utils.dart';
 import 'package:get/get.dart';
 import '../model/lost_found_table_record.dart';
 import '../controller/lost_and_found_detail_controller.dart';
@@ -198,7 +198,7 @@ class _LostAndFoundDetailScreenState extends State<LostAndFoundDetailScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(child: _buildSummaryItem('Created On', record.date != null ? DateFormat('dd MM yyyy').format(record.date!) : 'N/A')),
+                    Expanded(child: _buildSummaryItem('Created On', record.date != null ? AppDateUtils.formatDate(record.date!) : 'N/A')),
 
                     const SizedBox(width: 8),
                     Expanded(child: _buildSummaryItem('Created By', record.createdByDetail?.fullName?.toTitleCase() ?? 'N/A')),
@@ -248,7 +248,7 @@ class _LostAndFoundDetailScreenState extends State<LostAndFoundDetailScreen> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(child: _buildDetailField('${record.registerAs.toTitleCase()} Date', record.date != null ? DateFormat('dd MM yyyy, hh:mm a').format(record.date!) : 'N/A')),
+              Expanded(child: _buildDetailField('${record.registerAs.toTitleCase()} Date', record.date != null ? AppDateUtils.formatDateTime(record.date!) : 'N/A')),
 
               Expanded(child: _buildDetailField(isFound ? 'What Article Found' : 'What Article Lost', isFound ? (record.articleFound?.toTitleCase() ?? 'N/A') : (record.articleLost?.toTitleCase() ?? 'N/A'))),
             ],
@@ -343,7 +343,7 @@ class _LostAndFoundDetailScreenState extends State<LostAndFoundDetailScreen> {
             ),
             const SizedBox(height: 12),
             CustText(
-              name: 'Uploaded on ${record.createdAt != null ? DateFormat('dd MM yyyy').format(record.createdAt!) : 'N/A'}',
+              name: 'Uploaded on ${record.createdAt != null ? AppDateUtils.formatDate(record.createdAt!) : 'N/A'}',
 
               size: 1.1,
               color: AppColors.textColor4,
@@ -397,7 +397,7 @@ class _LostAndFoundDetailScreenState extends State<LostAndFoundDetailScreen> {
             children: [
             _buildDetailField('Handover To', record.handoverToName?.toTitleCase() ?? 'N/A'),
             const SizedBox(height: 16),
-            _buildDetailField('Handover Date', record.handoverDate != null ? DateFormat('dd MM yyyy').format(record.handoverDate!) : 'N/A'),
+            _buildDetailField('Handover Date', record.handoverDate != null ? AppDateUtils.formatDate(record.handoverDate!) : 'N/A'),
 
             const SizedBox(height: 16),
             _buildDetailField('Remarks', record.remarks?.capitalizeFirstLetter() ?? 'N/A'),
@@ -506,7 +506,7 @@ class _LostAndFoundDetailScreenState extends State<LostAndFoundDetailScreen> {
                       const Icon(Icons.access_time, size: 16, color: AppColors.textColor4),
                       const SizedBox(width: 4),
                       CustText(
-                        name: item.createdAt != null ? DateFormat('dd MM yyyy').format(item.createdAt!) : 'N/A',
+                        name: item.createdAt != null ? AppDateUtils.formatDate(item.createdAt!) : 'N/A',
 
                         size: 1.1,
                         color: AppColors.textColor4,

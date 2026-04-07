@@ -29,14 +29,14 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
   bool _isPersonalExpanded = true;
   bool _isPermanentAddressExpanded = true;
   bool _isCurrentAddressExpanded = true;
-  bool _isEmploymentExpanded = true;
+  bool _isEmployeeExpanded = true;
   bool _isFinanceExpanded = true;
 
   late TabController _tabController;
   final ScrollController _scrollController = ScrollController();
 
   final GlobalKey _personalKey = GlobalKey();
-  final GlobalKey _employmentKey = GlobalKey();
+  final GlobalKey _employeeKey = GlobalKey();
   final GlobalKey _financeKey = GlobalKey();
 
   bool _isScrollingFromAuto = false;
@@ -60,12 +60,12 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
     if (_isScrollingFromAuto) return;
 
     final personalOffset = _getOffset(_personalKey);
-    final employmentOffset = _getOffset(_employmentKey);
+    final employeeOffset = _getOffset(_employeeKey);
     final financeOffset = _getOffset(_financeKey);
 
     if (_scrollController.offset >= (financeOffset - 100)) {
       if (_tabController.index != 2) _tabController.animateTo(2);
-    } else if (_scrollController.offset >= (employmentOffset - 100)) {
+    } else if (_scrollController.offset >= (employeeOffset - 100)) {
       if (_tabController.index != 1) _tabController.animateTo(1);
     } else {
       if (_tabController.index != 0) _tabController.animateTo(0);
@@ -85,7 +85,7 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
     GlobalKey targetKey;
     switch (index) {
       case 0: targetKey = _personalKey; break;
-      case 1: targetKey = _employmentKey; break;
+      case 1: targetKey = _employeeKey; break;
       case 2: targetKey = _financeKey; break;
       default: targetKey = _personalKey;
     }
@@ -164,7 +164,7 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
                     const SizedBox(height: 16),
                     Container(key: _personalKey, child: _buildPersonalDetailsTab(data)),
                     const SizedBox(height: 16),
-                    Container(key: _employmentKey, child: _buildEmploymentDetailsTab(data)),
+                    Container(key: _employeeKey, child: _buildEmployeeDetailsTab(data)),
                     const SizedBox(height: 16),
                     Container(key: _financeKey, child: _buildFinanceDetailsTab(data)),
                   ],
@@ -344,7 +344,7 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
         onTap: (index) => _scrollToSection(index),
         tabs: const [
           Tab(text: 'Personal Details'),
-          Tab(text: 'Employment Details'),
+          Tab(text: 'Employee Details'),
           Tab(text: 'Finance Details'),
         ],
       ),
@@ -429,21 +429,21 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
     );
   }
 
-  Widget _buildEmploymentDetailsTab(UserProfileData? data) {
+  Widget _buildEmployeeDetailsTab(UserProfileData? data) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: AccordionCard(
-        title: 'Employment Details',
+        title: 'Employee Details',
         isExpanded: true,
-        expanded: _isEmploymentExpanded,
-        onTap: () => setState(() => _isEmploymentExpanded = !_isEmploymentExpanded),
+        expanded: _isEmployeeExpanded,
+        onTap: () => setState(() => _isEmployeeExpanded = !_isEmployeeExpanded),
         child: Column(
           children: [
-            _detailRow('Date of Joining', data?.userDetails?.dateOfJoining ?? 'N/A', 'City', data?.cities?.isNotEmpty == true ? data!.cities!.first.name : 'N/A'),
+            _detailRow('Date of Joining', data?.userDetails?.dateOfJoining ?? 'N/A', 'City', data?.cities?.isNotEmpty == true ? data!.cities!.first.name.toTitleCase() : 'N/A'),
             const SizedBox(height: 16),
-            _detailRow('Department', data?.departments?.isNotEmpty == true ? data!.departments!.first.name : 'N/A', 'Station', data?.stations?.isNotEmpty == true ? data!.stations!.first.name : 'N/A'),
+            _detailRow('Department', data?.departments?.isNotEmpty == true ? data!.departments!.first.name.toTitleCase() : 'N/A', 'Station', data?.stations?.isNotEmpty == true ? data!.stations!.first.name.toTitleCase() : 'N/A'),
             const SizedBox(height: 16),
-            _detailRow('Role', data?.role?.name ?? 'N/A', 'Designation', data?.designation?.name ?? 'N/A'),
+            _detailRow('Role', data?.role?.name.toTitleCase() ?? 'N/A', 'Designation', data?.designation?.name.toTitleCase() ?? 'N/A'),
             const SizedBox(height: 16),
             _detailRow('Duty Shift', data?.userDetails?.shiftType?.toTitleCase() ?? 'N/A', '', ''),
           ],

@@ -22,6 +22,7 @@ import '../../../view/widgets/cust_textfield.dart';
 import '../../../view/widgets/custom_app_bar.dart';
 import '../../../view/widgets/custom_dialog.dart';
 import '../../../view/widgets/custom_snackbar.dart';
+import '../../../view/widgets/custom_update_dialog.dart';
 import '../../../view/widgets/file_upload_section.dart';
 import '../../../view/widgets/cust_loader.dart';
 
@@ -49,7 +50,7 @@ class LostAndFoundScreen extends StatefulWidget {
 
 class _LostAndFoundScreenState extends State<LostAndFoundScreen> {
   final LostFoundService _service = LostFoundService();
-  
+
   final GlobalKey<FormState> _step1FormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _step2FormKey = GlobalKey<FormState>();
 
@@ -102,15 +103,15 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> {
   bool _isLoadingRole = true;
 
   final List<String> _registerAsOptions = ['Lost', 'Found'];
-  
+
   final List<String> _basicColorListValue = [
     'Red', 'Blue', 'Green', 'Black', 'White', 'Yellow', 'Other'
   ];
-  
+
   final List<String> _lostItemCategoryListValue = [
     'Electronics', 'Clothing', 'Documents', 'Bag', 'Wallet','Water bottle' 'Other'
   ];
-  
+
   final List<String> _idProofListValue = [
     'Aadhar Card', 'PAN Card', 'Driving License', 'Voter ID', 'Passport', 'Other'
   ];
@@ -150,7 +151,7 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> {
     _loadUserRole();
     if (widget.mode == 'edit' && widget.record != null) {
       _populateFields();
-      
+
       // Reactive population for station name if it arrives after initialization
       final stationController = Get.find<StationController>();
       if (stationController.stations.isEmpty) {
@@ -177,7 +178,7 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> {
     final record = widget.record!;
     _registerAs = record.registerAs;
     // Prioritize name from controller if available, fallback to record's stations object
-    _selectedStation = Get.find<StationController>().getStationNameById(record.stationID) ?? 
+    _selectedStation = Get.find<StationController>().getStationNameById(record.stationID) ??
                       record.stations?.name;
     _selectedDate = record.date;
     _internalNotesController.text = record.internalNotes ?? '';
@@ -198,7 +199,7 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> {
     _quantityController.text = record.quantity?.toString() ?? '';
     _estimateValueController.text = record.estimateValue ?? '';
     _descriptionController.text = record.description ?? '';
-    
+
     // Verification fields
     _verifiedColor = record.verifiedColor;
     _verifiedIdProof = record.verifiedIdProof;
@@ -273,14 +274,23 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> {
                   ),
                 if (_currentStep == _steps.length - 1)
                   CustButton(
-                    name: 'Submit',
+                    name: widget.mode == 'edit' ? 'Update' : 'Submit',
                     onSelected: (_) {
                       if (_currentStep == 0) {
                         if (!(_step1FormKey.currentState?.validate() ?? true)) return;
                       } else if (_currentStep == 1) {
                         if (!(_step2FormKey.currentState?.validate() ?? true)) return;
                       }
-                      _submitForm();
+
+                      if (widget.mode == 'edit') {
+                        CustomUpdateDialog.show(
+                          onConfirm: (remark) {
+                            _submitForm(updateRemark: remark);
+                          }
+                        );
+                      } else {
+                        _submitForm();
+                      }
                     },
                   ),
               ],
@@ -299,7 +309,7 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: AccordionCard(
           title: 'Basic Details',
-          isExpanded: true, 
+          isExpanded: true,
           expanded: true,
           onTap: () {},
           child: Column(
@@ -323,7 +333,7 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> {
               return CustDropdown(
                 label: 'Station',
                 hint: 'Enter Station',
-                items: stationController.stations.isEmpty ? stationListValue : stationController.stationNames, 
+                items: stationController.stations.isEmpty ? stationListValue : stationController.stationNames,
                 selectedValue: _selectedStation,
                 validator: (value) => value == null || value.isEmpty ? 'Please Select Station' : null,
                 onChanged: (value) => setState(() => _selectedStation = value),
@@ -460,7 +470,7 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> {
 
   void _startMatchAnimation() async {
     if (widget.record == null) return;
-    
+
     setState(() {
       _isAutoMatching = true;
       _autoMatchResult = null;
@@ -493,19 +503,19 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> {
     // Only start animation if we have matches OR if user wants to see the breakdown even for 0
     // But user said: "if 0 match then just show msg no match found no need to show all pie chart and other things"
     bool hasMatches = (_autoMatchResult?['matches'] as List?)?.isNotEmpty ?? false;
-    
+
     if (!hasMatches) return;
 
     // Wait for gauge animation to finish (gauge duration is 1500ms)
     await Future.delayed(const Duration(milliseconds: 1500));
-    
+
     for (int i = 0; i <= 6; i++) {
       if (!mounted) return;
       setState(() {
         _visibleItemsCount = i;
       });
       await Future.delayed(const Duration(milliseconds: 400));
-      
+
       // Gradually scroll down as items appear
       if (_stepScrollController.hasClients) {
         _stepScrollController.animateTo(
@@ -576,30 +586,30 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> {
           ),
         ),
         const SizedBox(height: 16),
-        
+
         // Animated List Items using API data
-        _buildAnimatedListItem(0, 'Category Match', '$catPerc%', 
-          catPerc >= 50 ? TablerIcons.circle_check_filled : Icons.cancel, 
+        _buildAnimatedListItem(0, 'Category Match', '$catPerc%',
+          catPerc >= 50 ? TablerIcons.circle_check_filled : Icons.cancel,
           catPerc >= 50 ? AppColors.green : AppColors.red),
-        
-        _buildAnimatedListItem(1, 'Color Match', '$colorPerc%', 
-          colorPerc >= 50 ? Icons.check_circle : Icons.cancel, 
+
+        _buildAnimatedListItem(1, 'Color Match', '$colorPerc%',
+          colorPerc >= 50 ? Icons.check_circle : Icons.cancel,
           colorPerc >= 50 ? AppColors.green : AppColors.red),
-        
-        _buildAnimatedListItem(2, 'Station Match', '$stationPerc%', 
-          stationPerc >= 50 ? Icons.check_circle : Icons.cancel, 
+
+        _buildAnimatedListItem(2, 'Station Match', '$stationPerc%',
+          stationPerc >= 50 ? Icons.check_circle : Icons.cancel,
           stationPerc >= 50 ? AppColors.green : AppColors.red),
-        
-        _buildAnimatedListItem(3, 'Date Match', '$datePerc%', 
-          datePerc >= 50 ? Icons.check_circle : Icons.watch_later, 
+
+        _buildAnimatedListItem(3, 'Date Match', '$datePerc%',
+          datePerc >= 50 ? Icons.check_circle : Icons.watch_later,
           datePerc >= 50 ? AppColors.green : AppColors.orange),
-        
-        _buildAnimatedListItem(4, 'Place Match', '$placePerc%', 
-          placePerc >= 50 ? Icons.check_circle : Icons.watch_later, 
+
+        _buildAnimatedListItem(4, 'Place Match', '$placePerc%',
+          placePerc >= 50 ? Icons.check_circle : Icons.watch_later,
           placePerc >= 50 ? AppColors.green : AppColors.orange),
-        
-        _buildAnimatedListItem(5, 'Description Match', '$descPerc%', 
-          descPerc >= 50 ? Icons.check_circle : Icons.watch_later, 
+
+        _buildAnimatedListItem(5, 'Description Match', '$descPerc%',
+          descPerc >= 50 ? Icons.check_circle : Icons.watch_later,
           descPerc >= 50 ? AppColors.green : AppColors.orange),
 
         if (_visibleItemsCount >= 6 && (_selectedMatchItems == null || _selectedMatchItems!.isEmpty)) ...[
@@ -611,7 +621,7 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> {
                 lostID: widget.record!.id!,
                 matchData: _autoMatchResult?['matches'] ?? [],
               ));
-              
+
               if (result != null && result is Map<String, dynamic>) {
                 setState(() => _selectedMatchItems = [result]);
               }
@@ -980,8 +990,8 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> {
 
   Widget _buildTextFieldWithLabel(String label, String hint, TextEditingController controller, {bool isRequired = true, String? Function(String?)? customValidator, int? maxlength, TextInputType? keyboardType, TextCapitalization textCapitalization = TextCapitalization.none}) {
     return CustomTextField(
-      label: label, 
-      controller: controller, 
+      label: label,
+      controller: controller,
       hintText: hint,
       keyboardType: keyboardType ?? TextInputType.text,
       textCapitalization: textCapitalization,
@@ -990,7 +1000,7 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> {
     );
   }
 
-  void _submitForm() async {
+  void _submitForm({String? updateRemark}) async {
     // Check connectivity first
     bool isOnline = await NetworkUtils.checkConnectivity();
     if (!isOnline) {
@@ -1018,7 +1028,7 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> {
 
       final stationController = Get.find<StationController>();
       int? stationID = stationController.getStationIdByName(_selectedStation);
-      
+
       if (stationID == null && widget.mode == 'edit') {
         stationID = widget.record?.stationID;
       }
@@ -1058,7 +1068,7 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> {
         "handoverDate": _handoverDate?.toIso8601String(),
         "handoverToName": nullable(_handoverToNameController.text),
         "remarks": nullable(_remarksController.text),
-        "remark": nullable(_remarksController.text), // Many APIs use singular for update comment
+        "remark": updateRemark ?? "", 
         if (widget.mode == 'edit') "matchStatus": widget.record?.matchStatus ?? 0,
         if (widget.mode == 'edit') "isActive": widget.record?.isActive ?? true,
         "files": _attachedFiles

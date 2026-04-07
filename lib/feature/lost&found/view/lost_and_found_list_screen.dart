@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
+import '../../../utils/app_date_utils.dart';
 import 'package:om_appcart/constants/colors.dart';
 import '../../../view/widgets/cust_fab.dart';
 import '../../../view/widgets/cust_loader.dart';
@@ -56,15 +56,15 @@ class _LostAndFoundListScreenState extends State<LostAndFoundListScreen> {
   String _getMatchStatusText(int status) {
     switch (status) {
       case 1:
-        return 'Opened';
+        return 'Open';
       case 2:
         return 'Unmatched';
       case 3:
-        return 'Match Found';
+        return 'Matched';
       case 4:
         return 'Verified';
       case 5:
-        return 'Finalized';
+        return 'Closed';
       default:
         return 'Unknown';
     }
@@ -218,7 +218,7 @@ class _LostAndFoundListScreenState extends State<LostAndFoundListScreen> {
                             DetailColumn(label: 'Match Status', value: _getMatchStatusText(data.matchStatus)),
                             DetailColumn(
                               label: 'Date',
-                              value: data.date != null ? DateFormat('dd MM yyyy').format(data.date!) : 'N/A',
+                              value: data.date != null ? AppDateUtils.formatDate(data.date!) : 'N/A',
                             ),
                           ],
                           onTap: () {

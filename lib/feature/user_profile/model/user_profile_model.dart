@@ -1,3 +1,5 @@
+import 'package:om_appcart/utils/app_date_utils.dart';
+
 class UserProfileResponse {
   final bool status;
   final String? message;
@@ -182,8 +184,8 @@ class UserDetails {
 
   factory UserDetails.fromJson(Map<String, dynamic> json) {
     return UserDetails(
-      dateOfBirth: json['dateOfBirth'] as String?,
-      dateOfJoining: json['dateOfJoining'] as String?,
+      dateOfBirth: AppDateUtils.parseFromServer(json['dateOfBirth'] as String?),
+      dateOfJoining: AppDateUtils.parseFromServer(json['dateOfJoining'] as String?),
       employeeID: json['employeeID'] as String?,
       birthPlace: json['birthPlace'] as String?,
       bloodGroup: json['bloodGroup'] as String?,

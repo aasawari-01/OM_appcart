@@ -5,6 +5,7 @@ import 'package:dropdown_search/dropdown_search.dart';
 
 import '../../constants/colors.dart';
 import '../../utils/responsive_helper.dart';
+import '../../utils/string_utils.dart';
 import 'cust_text.dart';
 
 
@@ -45,7 +46,7 @@ class CustDropdown extends StatelessWidget {
             selectedItem: selectedValue,
             onChanged: onChanged,
             validator: validator,
-            items: (filter, loadProps) => items,
+            items: (filter, loadProps) => items.map((e) => e.toTitleCase()).toList(),
               // popupProps: PopupProps.menu(
               //   showSearchBox: true,
               //   fit: FlexFit.loose,
@@ -114,7 +115,7 @@ class CustDropdown extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: CustText(
-                      name: item,
+                      name: item.toTitleCase(),
                       color: AppColors.textColor4,
                       size: 1.6 ,
                     ),

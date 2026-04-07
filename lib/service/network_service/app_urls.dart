@@ -1,6 +1,6 @@
 class AppUrls {
   /// Base URL for all API calls.
-  static const String baseUrl = 'http://192.168.1.45:8000/';
+  static const String baseUrl = 'http://192.168.1.65:8000/';
 
   /// Auth endpoints
   static const String login = 'auth/login';

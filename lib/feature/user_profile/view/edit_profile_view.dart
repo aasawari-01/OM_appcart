@@ -8,7 +8,7 @@ import 'package:om_appcart/view/widgets/custom_confirmation_dialog.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:om_appcart/utils/network_utils.dart';
 import 'package:om_appcart/view/widgets/custom_dialog.dart';
-import 'package:intl/intl.dart';
+import '../../../utils/app_date_utils.dart';
 
 import '../../../constants/colors.dart';
 import '../../../controller/station_controller.dart';
@@ -21,6 +21,7 @@ import '../../../view/widgets/custom_app_bar.dart';
 import '../../../view/widgets/cust_button.dart';
 import '../../../view/widgets/accordion_card.dart';
 import '../../../view/widgets/custom_snackbar.dart';
+import '../../../view/widgets/cust_date_time_picker.dart';
 import '../controller/user_profile_controller.dart';
 import '../model/user_profile_model.dart';
 
@@ -37,7 +38,7 @@ class _EditProfileViewState extends State<EditProfileView> with SingleTickerProv
   final ScrollController _scrollController = ScrollController();
 
   final GlobalKey _personalKey = GlobalKey();
-  final GlobalKey _employmentKey = GlobalKey();
+  final GlobalKey _employeeKey = GlobalKey();
   final GlobalKey _financeKey = GlobalKey();
 
   // Personal Details Controllers
@@ -71,7 +72,7 @@ class _EditProfileViewState extends State<EditProfileView> with SingleTickerProv
   final pStateController = TextEditingController();
   final pCountryController = TextEditingController();
 
-  // Employment Details
+  // Employee Details
   final dojController = TextEditingController();
   final empCityController = TextEditingController();
   final deptController = TextEditingController();
@@ -123,12 +124,12 @@ class _EditProfileViewState extends State<EditProfileView> with SingleTickerProv
     if (_isScrollingFromAuto) return;
 
     final personalOffset = _getOffset(_personalKey);
-    final employmentOffset = _getOffset(_employmentKey);
+    final employeeOffset = _getOffset(_employeeKey);
     final financeOffset = _getOffset(_financeKey);
 
     if (_scrollController.offset >= (financeOffset - 100)) {
       if (_tabController.index != 2) _tabController.animateTo(2);
-    } else if (_scrollController.offset >= (employmentOffset - 100)) {
+    } else if (_scrollController.offset >= (employeeOffset - 100)) {
       if (_tabController.index != 1) _tabController.animateTo(1);
     } else {
       if (_tabController.index != 0) _tabController.animateTo(0);
@@ -149,7 +150,7 @@ class _EditProfileViewState extends State<EditProfileView> with SingleTickerProv
     GlobalKey targetKey;
     switch (index) {
       case 0: targetKey = _personalKey; break;
-      case 1: targetKey = _employmentKey; break;
+      case 1: targetKey = _employeeKey; break;
       case 2: targetKey = _financeKey; break;
       default: targetKey = _personalKey;
     }
@@ -188,12 +189,8 @@ class _EditProfileViewState extends State<EditProfileView> with SingleTickerProv
       
       final details = data.userDetails;
       if (details != null) {
-        dobController.text = details.dateOfBirth != null && details.dateOfBirth!.contains('-') 
-            ? DateFormat('dd MM yyyy').format(DateTime.parse(details.dateOfBirth!)) 
-            : (details.dateOfBirth ?? '').replaceAll('/', ' ');
-        dojController.text = details.dateOfJoining != null && details.dateOfJoining!.contains('-')
-            ? DateFormat('dd MM yyyy').format(DateTime.parse(details.dateOfJoining!))
-            : (details.dateOfJoining ?? '').replaceAll('/', ' ');
+        dobController.text = details.dateOfBirth ?? '';
+        dojController.text = details.dateOfJoining ?? '';
 
         bloodGroupController.text = (details.bloodGroup ?? '').toUpperCase();
         birthPlaceController.text = _capitalize(details.birthPlace);
@@ -228,7 +225,7 @@ class _EditProfileViewState extends State<EditProfileView> with SingleTickerProv
         parseAddress(details.permanentAddress, pResHouseNoController, pLocalityController, pPincodeController, pCityController, pStateController, pCountryController);
       }
 
-      // Pre-fill some employment details from base model if available
+      // Pre-fill some employee details from base model if available
       if (data.cities != null && data.cities!.isNotEmpty) empCityController.text = data.cities!.first.name;
       if (data.departments != null && data.departments!.isNotEmpty) deptController.text = data.departments!.first.name;
       if (data.stations != null && data.stations!.isNotEmpty)   _selectedStation = data.stations!.first.name;
@@ -262,7 +259,7 @@ class _EditProfileViewState extends State<EditProfileView> with SingleTickerProv
                         children: [
                           _buildPersonalDetailsSection(),
                           const SizedBox(height: 24),
-                          _buildEmploymentDetailsSection(),
+                          _buildEmployeeDetailsSection(),
                           const SizedBox(height: 24),
                           _buildFinanceDetailsSection(),
                           const SizedBox(height: 10), // Extra space at bottom
@@ -311,13 +308,7 @@ class _EditProfileViewState extends State<EditProfileView> with SingleTickerProv
 
                   if (!confirm) return;
 
-                  // Helper function to convert DD/MM/YYYY to YYYY-MM-DD
-                  String formatToApiDate(String date) {
-                    if (date.isEmpty || !date.contains(' ')) return date;
-                    final parts = date.split(' ');
-                    if (parts.length != 3) return date;
-                    return "${parts[2]}-${parts[1]}-${parts[0]}";
-                  }
+
 
                   final _stationController = Get.find<StationController>();
                   int? stationID = _stationController.getStationIdByName(_selectedStation);
@@ -333,8 +324,8 @@ class _EditProfileViewState extends State<EditProfileView> with SingleTickerProv
                   }
 
                   final userDetails = UserDetails(
-                    dateOfBirth: formatToApiDate(dobController.text),
-                    dateOfJoining: formatToApiDate(dojController.text),
+                    dateOfBirth: AppDateUtils.formatToApiDate(dobController.text),
+                    dateOfJoining: AppDateUtils.formatToApiDate(dojController.text),
                     employeeID: empNoController.text,
                     birthPlace: birthPlaceController.text,
                     bloodGroup: bloodGroupController.text,
@@ -525,7 +516,7 @@ class _EditProfileViewState extends State<EditProfileView> with SingleTickerProv
         onTap: (index) => _scrollToSection(index),
         tabs: const [
           Tab(text: 'Personal Details'),
-          Tab(text: 'Employment Details'),
+          Tab(text: 'Employee Details'),
           Tab(text: 'Finance Details'),
         ],
       ),
@@ -563,13 +554,16 @@ class _EditProfileViewState extends State<EditProfileView> with SingleTickerProv
             const SizedBox(height: 16),
             _buildGenderSelection(),
             const SizedBox(height: 16),
-            CustomTextField(
-              controller: dobController, 
-              label: 'Date of Birth', 
-              hintText: 'DD/MM/YYYY',
-              suffixIcon: const Icon(Icons.calendar_month, color: AppColors.textColor4),
-              readOnly: true,
-              onTap: () => _selectDate(dobController),
+            CustDateTimePicker(
+              label: 'Date of Birth',
+              hint: 'DD/MM/YYYY',
+              selectedDateTime: dobController.text.isEmpty ? null : AppDateUtils.parseDate(dobController.text),
+              pickerType: CustDateTimePickerType.date,
+              onDateTimeSelected: (date) {
+                if (date != null) {
+                  setState(() => dobController.text = AppDateUtils.formatDate(date));
+                }
+              },
             ),
             const SizedBox(height: 16),
             CustDropdown(
@@ -647,26 +641,29 @@ class _EditProfileViewState extends State<EditProfileView> with SingleTickerProv
     );
   }
 
-  Widget _buildEmploymentDetailsSection() {
+  Widget _buildEmployeeDetailsSection() {
     return Container(
-      key: _employmentKey,
+      key: _employeeKey,
       child: AccordionCard(
-        title: 'Employment Details',
+        title: 'Employee Details',
         isExpanded: true,
         expanded: true,
         onTap: () {},
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const CustText(name: 'Employment Details', size: 1.6, fontWeightName: FontWeight.w600),
+            const CustText(name: 'Employee Details', size: 1.6, fontWeightName: FontWeight.w600),
             const SizedBox(height: 16),
-            CustomTextField(
-              controller: dojController, 
-              label: 'Date of Joining', 
-              hintText: 'DD/MM/YYYY',
-              suffixIcon: const Icon(Icons.calendar_month, color: AppColors.textColor4),
-              readOnly: true,
-              onTap: () => _selectDate(dojController),
+            CustDateTimePicker(
+              label: 'Date of Joining',
+              hint: 'DD/MM/YYYY',
+              selectedDateTime: dojController.text.isEmpty ? null : AppDateUtils.parseDate(dojController.text),
+              pickerType: CustDateTimePickerType.date,
+              onDateTimeSelected: (date) {
+                if (date != null) {
+                  setState(() => dojController.text = AppDateUtils.formatDate(date));
+                }
+              },
             ),
             const SizedBox(height: 16),
             Obx(() => CustDropdown(
@@ -860,30 +857,4 @@ class _EditProfileViewState extends State<EditProfileView> with SingleTickerProv
     );
   }
 
-  Future<void> _selectDate(TextEditingController controller) async {
-    DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now().add(const Duration(days: 365 * 10)),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: AppColors.blue,
-              onPrimary: Colors.white,
-              onSurface: AppColors.black,
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-    if (picked != null) {
-      setState(() {
-        controller.text = "${picked.day.toString().padLeft(2, '0')} ${picked.month.toString().padLeft(2, '0')} ${picked.year}";
-      });
-
-    }
-  }
 }
