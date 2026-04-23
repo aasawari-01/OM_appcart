@@ -125,9 +125,6 @@ class _TSRDetailsScreenState extends State<TSRDetailsScreen> {
 
   Widget _buildTSROverviewSection() {
     return AccordionCard(
-      expanded: true,
-      onTap: () {},
-      isExpanded: false,
       title: "",
       child:  Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -258,9 +255,6 @@ class _TSRDetailsScreenState extends State<TSRDetailsScreen> {
 
   Widget _buildTSRForm() {
     return AccordionCard(
-      expanded: true,
-      onTap: () {},
-      isExpanded: false,
       title: "TSR Details",
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -472,9 +466,6 @@ class _TSRDetailsScreenState extends State<TSRDetailsScreen> {
       children: [
         // TSR Details Section
         AccordionCard(
-          expanded: true,
-          onTap: () {},
-          isExpanded: false,
           title: "TSR Details",
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -543,9 +534,6 @@ class _TSRDetailsScreenState extends State<TSRDetailsScreen> {
         const SizedBox(height: 16),
         // Operation Details Section
         AccordionCard(
-          expanded: true,
-          onTap: () {},
-          isExpanded: false,
           title: "Operation Details",
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -599,9 +587,6 @@ class _TSRDetailsScreenState extends State<TSRDetailsScreen> {
         const SizedBox(height: 16),
         // TSR Implementation Section
         AccordionCard(
-          expanded: true,
-          onTap: () {},
-          isExpanded: false,
           title: "TSR Implementation",
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -683,9 +668,6 @@ class _TSRDetailsScreenState extends State<TSRDetailsScreen> {
         SizedBox(height: ResponsiveHelper.spacing(context, 16)),
         // Complete TSR Details Section
         AccordionCard(
-          expanded: true,
-          onTap: () {},
-          isExpanded: false,
           title: "Complete TSR Details",
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
