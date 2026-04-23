@@ -191,10 +191,7 @@ class _OCCFailureScreenState extends State<OCCFailureScreen> {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: AccordionCard(
-        isExpanded: false,
-        expanded: true,
         title: _stepTitles[_currentStep],
-        onTap: () {},
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -322,10 +319,7 @@ class _OCCFailureScreenState extends State<OCCFailureScreen> {
       controller: _tripAffectedScrollController,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: AccordionCard(
-        isExpanded: false,
-        expanded: true,
         title: _stepTitles[_currentStep],
-        onTap: () {},
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -521,10 +515,7 @@ class _OCCFailureScreenState extends State<OCCFailureScreen> {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: AccordionCard(
-        isExpanded: false,
-        expanded: true,
         title: _stepTitles[_currentStep],
-        onTap: () {},
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -585,21 +576,18 @@ class _OCCFailureScreenState extends State<OCCFailureScreen> {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: AccordionCard(
-        isExpanded: false,
-        expanded: true,
         title: _stepTitles[_currentStep],
-        onTap: () {},
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            FileUploadSection(
-              files: _attachedFiles,
-              onFilesChanged: (files) {
-                setState(() {
-                  _attachedFiles = files;
-                });
-              },
-            ),
+            // FileUploadSection(
+            //   files: _attachedFiles,
+            //   onFilesChanged: (files) {
+            //     setState(() {
+            //       _attachedFiles = files;
+            //     });
+            //   },
+            // ),
           ],
         ),
       ),
