@@ -10,7 +10,7 @@ import '../service/user_profile_cache_service.dart';
 import '../../../service/auth_manager.dart';
 import '../../../view/widgets/custom_snackbar.dart';
 
-class UserProfileController extends GetxController {
+class UserProfileController extends GetxController with GetSingleTickerProviderStateMixin {
   final UserProfileService _service;
   final UserProfileCacheService _cacheService = UserProfileCacheService();
 
@@ -28,16 +28,88 @@ class UserProfileController extends GetxController {
 
   final ImagePicker _picker = ImagePicker();
 
+  // Expansion states for Profile View Accordions
+  var isPersonalExpanded = true.obs;
+  var isPermanentAddressExpanded = true.obs;
+  var isCurrentAddressExpanded = true.obs;
+  var isEmployeeExpanded = true.obs;
+  var isFinanceExpanded = true.obs;
+
+  late TabController tabController;
+  final ScrollController scrollController = ScrollController();
+
+  final GlobalKey personalKey = GlobalKey();
+  final GlobalKey employeeKey = GlobalKey();
+  final GlobalKey financeKey = GlobalKey();
+
+  bool _isScrollingFromAuto = false;
+
   @override
   void onInit() {
     super.onInit();
+    tabController = TabController(length: 3, vsync: this);
+    scrollController.addListener(_scrollListener);
+    
     fetchProfileData();
     fetchMasterData();
   }
 
-  Future<void> fetchMasterData() async {
-    print("DEBUG: fetchMasterData - Starting...");
+  @override
+  void onClose() {
+    tabController.dispose();
+    scrollController.removeListener(_scrollListener);
+    scrollController.dispose();
+    super.onClose();
+  }
+
+  void _scrollListener() {
+    if (_isScrollingFromAuto) return;
+
+    final employeeOffset = _getOffset(employeeKey);
+    final financeOffset = _getOffset(financeKey);
+
+    if (scrollController.offset >= (financeOffset - 100)) {
+      if (tabController.index != 2) tabController.animateTo(2);
+    } else if (scrollController.offset >= (employeeOffset - 100)) {
+      if (tabController.index != 1) tabController.animateTo(1);
+    } else {
+      if (tabController.index != 0) tabController.animateTo(0);
+    }
+  }
+
+  double _getOffset(GlobalKey key) {
+    final RenderBox? renderBox = key.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox == null) return 0;
+    return renderBox.localToGlobal(Offset.zero, ancestor: null).dy + scrollController.offset - 250;
+  }
+
+  void scrollToSection(int index) {
+    _isScrollingFromAuto = true;
+    tabController.animateTo(index);
     
+    GlobalKey targetKey;
+    switch (index) {
+      case 0: targetKey = personalKey; break;
+      case 1: targetKey = employeeKey; break;
+      case 2: targetKey = financeKey; break;
+      default: targetKey = personalKey;
+    }
+
+    final context = targetKey.currentContext;
+    if (context != null) {
+      Scrollable.ensureVisible(
+        context,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      ).then((_) {
+        _isScrollingFromAuto = false;
+      });
+    } else {
+      _isScrollingFromAuto = false;
+    }
+  }
+
+  Future<void> fetchMasterData() async {
     // Try to load from cache first for immediate UI update
     final cachedCities = await _cacheService.getCities();
     if (cachedCities != null) cities.value = cachedCities;
@@ -57,9 +129,8 @@ class UserProfileController extends GetxController {
         cities.value = cityRes.data;
         _cacheService.saveCities(cityRes.data);
       }
-      print("DEBUG: fetchMasterData - Cities loaded: ${cities.length}");
     } catch (e) {
-      print("DEBUG: fetchMasterData - Error loading Cities: $e");
+      // Ignored for individual fetch failures to allow others to continue
     }
 
     try {
@@ -68,9 +139,8 @@ class UserProfileController extends GetxController {
         departmentTypes.value = deptRes.data;
         _cacheService.saveDepartments(deptRes.data);
       }
-      print("DEBUG: fetchMasterData - Depts loaded: ${departmentTypes.length}");
     } catch (e) {
-      print("DEBUG: fetchMasterData - Error loading Depts: $e");
+      // Ignore
     }
 
     try {
@@ -79,9 +149,8 @@ class UserProfileController extends GetxController {
         roles.value = roleRes.data;
         _cacheService.saveRoles(roleRes.data);
       }
-      print("DEBUG: fetchMasterData - Roles loaded: ${roles.length}");
     } catch (e) {
-      print("DEBUG: fetchMasterData - Error loading Roles: $e");
+      // Ignore
     }
 
     try {
@@ -90,9 +159,8 @@ class UserProfileController extends GetxController {
         designations.value = desigRes.data;
         _cacheService.saveDesignations(desigRes.data);
       }
-      print("DEBUG: fetchMasterData - Designations loaded: ${designations.length}");
     } catch (e) {
-      print("DEBUG: fetchMasterData - Error loading Designations: $e");
+      // Ignore
     }
   }
 
@@ -107,15 +175,12 @@ class UserProfileController extends GetxController {
       }
 
       final String? userIdStr = await AuthManager().getUserId();
-      print("DEBUG: UserProfileController - Stored User ID: $userIdStr");
       
       if (userIdStr == null) {
-        print("DEBUG: UserProfileController - No User ID found in AuthManager");
         return;
       }
       int userId = int.parse(userIdStr);
 
-      print("DEBUG: UserProfileController - Fetching basic profile for ID: $userId");
       final response = await _service.getUserProfile(userId: userId);
       
       if (response.status && response.data != null && response.data!.isNotEmpty) {
@@ -124,22 +189,15 @@ class UserProfileController extends GetxController {
         try {
           matchedData = response.data!.firstWhere((u) => u.id == userId);
         } catch (_) {
-          print("DEBUG: UserProfileController - Warning: No user found with ID $userId in response list. Defaulting to first.");
           matchedData = response.data!.first;
         }
 
-        print("DEBUG: UserProfileController - Fetched Basic Data: ${matchedData.firstName} ${matchedData.lastName} (UniqueCode: ${matchedData.uniqueCode})");
-        
         profileData.value = matchedData;
         _cacheService.saveProfile(matchedData);
         
-        print("DEBUG: UserProfileController - Fetching full details for UniqueCode: ${matchedData.uniqueCode}");
         await fetchUserDetails(matchedData.uniqueCode);
-      } else {
-        print("DEBUG: UserProfileController - No profile data found in response");
       }
     } catch (e) {
-      print("DEBUG: UserProfileController - Error fetching profile: $e");
       // If we have cached data, we don't necessarily need to show an error
       if (profileData.value == null) {
          CustomSnackBar.show(title: 'Offline', message: 'Showing offline data.');
@@ -151,18 +209,14 @@ class UserProfileController extends GetxController {
 
   Future<void> fetchUserDetails(String userCode) async {
     try {
-      print("DEBUG: UserProfileController - Fetching details for: $userCode");
       final response = await _service.getUserDetails(userCode: userCode);
       if (response.status && response.data != null && response.data!.isNotEmpty) {
         final detailedData = response.data!.first;
-        print("DEBUG: UserProfileController - Fetched Details: ${detailedData.firstName} ${detailedData.lastName}");
         profileData.value = detailedData;
         _cacheService.saveProfile(detailedData);
-      } else {
-        print("DEBUG: UserProfileController - No details found in response");
       }
     } catch (e) {
-      print("DEBUG: UserProfileController - Error fetching user details: $e");
+      // Ignored here, errors bubbled up to main fetch
     }
   }
 
@@ -217,12 +271,6 @@ class UserProfileController extends GetxController {
       final String? userIdStr = await AuthManager().getUserId();
       if (userIdStr == null) throw Exception("User ID not found");
       int userId = int.parse(userIdStr);
-
-      print("DEBUG: updateProfile - cityIDs: ${cityIDs ?? profileData.value?.cityIDs}");
-      print("DEBUG: updateProfile - departmentIDs: ${departmentIDs ?? profileData.value?.departmentIDs}");
-      print("DEBUG: updateProfile - stationIDs: ${stationIDs ?? profileData.value?.stationIDs}");
-      print("DEBUG: updateProfile - roleID: ${roleID ?? profileData.value?.roleID}");
-      print("DEBUG: updateProfile - designationID: ${designationID ?? profileData.value?.designationID}");
 
       final Map<String, dynamic> userData = {
         "firstName": firstName,
@@ -307,6 +355,5 @@ class UserProfileController extends GetxController {
   void clearProfile() {
     profileData.value = null;
     selectedImage.value = null;
-    print("DEBUG: UserProfileController - Profile cleared.");
   }
 }

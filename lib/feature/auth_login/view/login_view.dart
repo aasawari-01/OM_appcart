@@ -5,6 +5,8 @@ import 'package:om_appcart/feature/auth_login/controller/login_controller.dart';
 import 'package:om_appcart/utils/validator.dart';
 
 import '../../../constants/colors.dart';
+import '../../../constants/strings.dart';
+import '../../../constants/app_constants.dart';
 import '../../../view/screens/tab_screen.dart';
 import '../../../view/widgets/cust_button.dart';
 import '../../../view/widgets/cust_text.dart';
@@ -59,131 +61,142 @@ class _LoginViewState extends State<LoginView> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: Colors.black,
-      body: SingleChildScrollView(
-        physics: (isKeyboardVisible || _hasValidationError)
-            ? const ClampingScrollPhysics()
-            : const NeverScrollableScrollPhysics(),
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        child: Column(
-          children: [
-            // Top Image
-            SizedBox(
-              height: screenHeight * 0.45,
-              width: double.infinity,
-              child: Image.asset(
-                "assets/images/metro.png",
-                fit: BoxFit.cover,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            physics: (isKeyboardVisible || _hasValidationError)
+                ? const ClampingScrollPhysics()
+                : const ClampingScrollPhysics(),
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: constraints.maxHeight,
               ),
-            ),
-
-            // Login Card
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: AppColors.white1,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(24),
-                  topRight: Radius.circular(24),
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(30),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustText(
-                        name: "Welcome to O&M",
-                        size: 2.4,
-                        fontWeightName: FontWeight.bold,
+              child: IntrinsicHeight(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: screenHeight * 0.45,
+                      width: double.infinity,
+                      child: Image.asset(
+                        "assets/images/metro.png",
+                        fit: BoxFit.cover,
                       ),
-                      const SizedBox(height: 10),
-                      CustText(
-                        name: "Enter username & password to log into MetroOps account",
-                        size: 1.8,
-                      ),
-                      const SizedBox(height: 20),
-                      CustText(name: "Email", size: 1.6),
-                      CustomTextField(
-                        controller: userNameController,
-                        hintText: "Enter Email",
-                        validator: Validator.validateEmail,
-                        onChanged: (_) {
-                          if (_hasValidationError) {
-                            setState(() => _hasValidationError = false);
-                          }
-                        },
-                      ),
-                      const SizedBox(height: 20),
-                      CustText(name: "Password", size: 1.6),
-                      CustomTextField(
-                        controller: passwordController,
-                        hintText: "Enter Password",
-                        obscureText: !_isPasswordVisible,
-                        validator: Validator.validatePassword,
-                        suffixIcon: InkWell(
-                          onTap: () {
-                            setState(() {
-                              _isPasswordVisible = !_isPasswordVisible;
-                            });
-                          },
-                          child: Icon(
-                            _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                            color: AppColors.grey,
+                    ),
+                    // Login Card
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: AppColors.white1,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(24),
+                            topRight: Radius.circular(24),
                           ),
                         ),
-                        onChanged: (_) {
-                          if (_hasValidationError) {
-                            setState(() => _hasValidationError = false);
-                          }
-                        },
-                      ),
-                      const SizedBox(height: 20),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: InkWell(
-                          onTap: () => Get.to(() => ForgotPasswordView()),
-                          child: CustText(
-                            name: "Forgot password?",
-                            size: 1.6,
-                            color: AppColors.blue,
+                        child: Padding(
+                          padding: EdgeInsets.all(ResponsiveHelper.spacing(context, 30)),
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CustText(
+                                  name: AppStrings.welcomeToOM,
+                                  size: 2.4,
+                                  fontWeightName: FontWeight.bold,
+                                ),
+                                SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.cardInnerSpacing)),
+                                CustText(
+                                  name: AppStrings.loginSubtitle,
+                                  size: 1.8,
+                                ),
+                                SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+                                CustomTextField(
+                                  label: AppStrings.email,
+                                  controller: userNameController,
+                                  hintText: AppStrings.enterEmail,
+                                  validator: Validator.validateEmail,
+                                  onChanged: (_) {
+                                    if (_hasValidationError) {
+                                      setState(() => _hasValidationError = false);
+                                    }
+                                  },
+                                ),
+                                SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+                                CustomTextField(
+                                  label: AppStrings.password,
+                                  controller: passwordController,
+                                  hintText: AppStrings.enterPassword,
+                                  obscureText: !_isPasswordVisible,
+                                  validator: Validator.validatePassword,
+                                  suffixIcon: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        _isPasswordVisible = !_isPasswordVisible;
+                                      });
+                                    },
+                                    child: Icon(
+                                      _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                                      color: AppColors.grey,
+                                    ),
+                                  ),
+                                  onChanged: (_) {
+                                    if (_hasValidationError) {
+                                      setState(() => _hasValidationError = false);
+                                    }
+                                  },
+                                ),
+                                SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: InkWell(
+                                    onTap: () => Get.to(() => ForgotPasswordView()),
+                                    child: CustText(
+                                      name: AppStrings.forgotPassword,
+                                      size: AppConstants.formLabelSize,
+                                      color: AppColors.blue,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.sectionSpacing)),
+                                Obx(
+                                  () => CustButton(
+                                    name: AppStrings.login,
+                                    size: double.infinity,
+                                    isEnabled: _isButtonEnabled && !loginController.isLoading.value,
+                                    isLoading: loginController.isLoading.value,
+                                    onSelected: (_) {
+                                      if (loginController.isLoading.value) return;
+                                      if (_formKey.currentState!.validate()) {
+                                        setState(() => _hasValidationError = false);
+                                        loginController.login(
+                                          email: userNameController.text.trim(),
+                                          password: passwordController.text.trim(),
+                                        );
+                                      }
+                                    },
+                                  ),
+                                ),
+                                SizedBox(height: ResponsiveHelper.spacing(context, 40)),
+                                Center(
+                                  child: CustText(
+                                    name: AppStrings.copyright,
+                                    size: AppConstants.bodySize,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 25),
-                      Obx(
-                        () => CustButton(
-                          name: "Log In",
-                          size: double.infinity,
-                          isEnabled: _isButtonEnabled && !loginController.isLoading.value,
-                          isLoading: loginController.isLoading.value,
-                          onSelected: (_) {
-                            if (loginController.isLoading.value) return;
-                            if (_formKey.currentState!.validate()) {
-                              setState(() => _hasValidationError = false);
-                              loginController.login(
-                                email: userNameController.text.trim(),
-                                password: passwordController.text.trim(),
-                              );
-                            }
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 40),
-                      Center(
-                        child: CustText(
-                          name: "© ${DateTime.now().year}, All rights reserved",
-                          size: 1.4,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

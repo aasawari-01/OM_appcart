@@ -89,10 +89,7 @@ class _GatePassDetailsFormState extends State<GatePassDetailsForm> {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: AccordionCard(
-        expanded: true,
-        isExpanded: false,
         title: _stepTitles[_currentStep],
-        onTap: () {},
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

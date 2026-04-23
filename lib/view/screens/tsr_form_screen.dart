@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:om_appcart/constants/app_data.dart';
-import 'package:om_appcart/controller/station_controller.dart';
+import 'package:om_appcart/feature/failure/controller/station_controller.dart';
 import 'package:om_appcart/constants/colors.dart';
 import 'package:om_appcart/utils/responsive_helper.dart';
 
@@ -68,9 +68,6 @@ class _TSRFormScreenState extends State<TSRFormScreen> {
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                 child: AccordionCard(
-                  expanded: true,
-                  onTap: () {},
-                  isExpanded: false,
                   title: "TSR Details",
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

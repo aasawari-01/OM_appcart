@@ -3,6 +3,7 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 
+import '../../constants/app_constants.dart';
 import '../../constants/colors.dart';
 import '../../utils/responsive_helper.dart';
 import '../../utils/string_utils.dart';
@@ -36,17 +37,13 @@ class CustDropdown extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CustText(
-           name: label,
-            size: 1.6,
-            fontWeightName: FontWeight.w500,
-          ),
-          SizedBox(height: ResponsiveHelper.spacing(context, 4)),
+          CustText.formLabel(label),
+          SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.labelSpacing)),
           DropdownSearch<String>(
             selectedItem: selectedValue,
             onChanged: onChanged,
             validator: validator,
-            items: (filter, loadProps) => items.map((e) => e.toTitleCase()).toList(),
+            items: (filter, loadProps) => items.map((e) => e.toTitle()).toList(),
               // popupProps: PopupProps.menu(
               //   showSearchBox: true,
               //   fit: FlexFit.loose,
@@ -115,7 +112,7 @@ class CustDropdown extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: CustText(
-                      name: item.toTitleCase(),
+                      name: item.toTitle(),
                       color: AppColors.textColor4,
                       size: 1.6 ,
                     ),

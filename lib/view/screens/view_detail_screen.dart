@@ -143,24 +143,15 @@ class _ViewDetailScreenState extends State<ViewDetailScreen> {
                   // Failure Details Card
                   AccordionCard(
                       title: "Failure Details",
-                      isExpanded: true,
-                    expanded: failureDetailsExpanded,
-                    onTap: () => setState(() => failureDetailsExpanded = !failureDetailsExpanded),
                   child:failureDetailsExpanded ? _failureDetailsContent() : null,),
                   SizedBox(height: ResponsiveHelper.spacing(context, 8)),
                   AccordionCard(
-                    isExpanded: true,
                     title: 'Passengers Affected',
-                    expanded: serviceAffectedExpanded,
-                    onTap: () => setState(() => serviceAffectedExpanded = !serviceAffectedExpanded),
                     child: serviceAffectedExpanded ? _serviceAffectedContent() : null,
                   ),
                   SizedBox(height: ResponsiveHelper.spacing(context, 8)),
                   AccordionCard(
-                    isExpanded: true,
                     title: 'Attached Document',
-                    expanded: attachedDocumentExpanded,
-                    onTap: () => setState(() => attachedDocumentExpanded = !attachedDocumentExpanded),
                     child: attachedDocumentExpanded ? _attachedDocumentContent() : null,
                   ),
                 ],

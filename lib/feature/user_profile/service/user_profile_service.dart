@@ -19,9 +19,6 @@ class UserProfileService {
       queryParameters: {'user_id': userId.toString()},
     );
 
-    print("DEBUG: UserProfileService.getUserProfile - URL: $uri");
-    print("DEBUG: UserProfileService.getUserProfile - Using Token: ${token != null}");
-
     final response = await http.get(
       uri,
       headers: {
@@ -29,9 +26,6 @@ class UserProfileService {
         if (token != null) 'Authorization': 'Bearer $token',
       },
     );
-
-    print("DEBUG: UserProfileService.getUserProfile - Status: ${response.statusCode}");
-    print("DEBUG: UserProfileService.getUserProfile - Body: ${response.body}");
 
     final Map<String, dynamic> jsonBody = jsonDecode(response.body);
 
@@ -72,17 +66,9 @@ class UserProfileService {
       ));
     }
 
-    print("DEBUG: Update Profile URL: $uri");
-    print("DEBUG: Payload Data: ${request.fields['userData']}");
-    print("DEBUG: Starting request.send()...");
-
     try {
       final streamedResponse = await request.send().timeout(const Duration(seconds: 30));
-      print("DEBUG: Request sent, receiving stream response...");
-      
       final response = await http.Response.fromStream(streamedResponse);
-      print("DEBUG: Response Status: ${response.statusCode}");
-      print("DEBUG: Response Body: ${response.body}");
 
       final Map<String, dynamic> jsonBody = jsonDecode(response.body);
 
@@ -95,7 +81,6 @@ class UserProfileService {
         throw Exception(message);
       }
     } catch (e) {
-      print("DEBUG: Error in updateUserProfile: $e");
       rethrow;
     }
   }
@@ -106,8 +91,6 @@ class UserProfileService {
       queryParameters: {'userCode': userCode},
     );
 
-    print("DEBUG: UserProfileService.getUserDetails - URL: $uri");
-
     final response = await http.get(
       uri,
       headers: {
@@ -115,9 +98,6 @@ class UserProfileService {
         if (token != null) 'Authorization': 'Bearer $token',
       },
     );
-
-    print("DEBUG: UserProfileService.getUserDetails - Status: ${response.statusCode}");
-    print("DEBUG: UserProfileService.getUserDetails - Body: ${response.body}");
 
     final Map<String, dynamic> jsonBody = jsonDecode(response.body);
 
@@ -182,6 +162,20 @@ class UserProfileService {
       return DesignationResponse.fromJson(jsonBody);
     } else {
       throw Exception(jsonBody['message'] ?? 'Failed to fetch designations');
+    }
+  }
+
+  Future<UserProfileResponse> getUsers({int type = 2}) async {
+    final response = await _apiClient.get(
+      AppUrls.updateUsers,
+      queryParameters: {'type': type.toString()},
+    );
+
+    final Map<String, dynamic> jsonBody = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      return UserProfileResponse.fromJson(jsonBody);
+    } else {
+      throw Exception(jsonBody['message'] ?? 'Failed to fetch users');
     }
   }
 }

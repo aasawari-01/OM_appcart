@@ -1,6 +1,6 @@
 class AppUrls {
   /// Base URL for all API calls.
-  static const String baseUrl = 'http://192.168.1.65:8000/';
+  static const String baseUrl = 'http://192.168.1.45:8000/';
 
   /// Auth endpoints
   static const String login = 'auth/login';
@@ -22,5 +22,15 @@ class AppUrls {
   static const String getDepartmentTypes = 'master/departmentType/';
   static const String getRoles = 'master/role/';
   static const String getDesignations = 'master/designation/';
+  static const String getFailureCategoryTypes = 'master/failureCategoryType/';
+  static const String getLocations = 'master/location/';
+  static const String getFunctionLocations = 'master/functionLocation/';
+  static const String getSubLocations = 'master/subLocation/';
+  static const String getObjectParts = 'master/objectPart';
+  static const String getFaults = 'master/fault';
+  static const String getRootCauses = 'master/rootCause';
+  static const String getMaterials = 'master/material';
+  static const String getActionTaken = 'master/actionTaken';
+  static const String getStoreLocations = 'master/storeLocation';
 }
 

@@ -111,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 CustText(
-                                  name: "Hello, ${(user?.firstName ?? 'User').capitalizeFirstLetter()}!",
+                                  name: "Hello, ${(user?.firstName ?? 'User').capitalizefirst()}!",
                                   size: 2.2,
                                   color: AppColors.white2,
                                   fontWeightName: FontWeight.w500,

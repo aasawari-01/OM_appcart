@@ -404,10 +404,7 @@ class _InspectionScreenState extends State<InspectionScreen> {
           right: 12,
           bottom: 12),
       child: AccordionCard(
-        isExpanded: false,
-        expanded: true,
         title: _stepTitles[_currentStep],
-        onTap: () {},
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

@@ -7,7 +7,7 @@ import 'package:photo_view/photo_view.dart';
 import 'package:om_appcart/view/widgets/full_image_viewer.dart';
 import '../../constants/colors.dart';
 import '../../utils/responsive_helper.dart';
-import '../../feature/lost&found/model/lost_found_table_record.dart'; // Import model
+import '../../feature/lost_and_found/model/lost_found_table_record.dart'; // Import model
 import 'cust_text.dart';
 
 class FileUploadSection extends StatefulWidget {

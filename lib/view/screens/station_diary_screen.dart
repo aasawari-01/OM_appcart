@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:om_appcart/controller/station_controller.dart';
+import 'package:om_appcart/feature/failure/controller/station_controller.dart';
 import 'package:om_appcart/constants/colors.dart';
 import 'package:om_appcart/utils/responsive_helper.dart';
 
@@ -170,9 +170,6 @@ class _StationDiaryScreenState extends State<StationDiaryScreen> {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: AccordionCard(
-        expanded: true,
-        onTap: () {},
-        isExpanded: false,
         title: _stepTitles[_currentStep],
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -237,12 +234,7 @@ class _StationDiaryScreenState extends State<StationDiaryScreen> {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                     child: AccordionCard(
-                      isExpanded: false,
-                      expanded: true,
                       title: _stepTitles[_currentStep],
-                      onTap: () {
-
-                      },
                       child: SizedBox(
                         width: ResponsiveHelper.width(context, 200),
                         child: CustButton(
@@ -264,12 +256,7 @@ class _StationDiaryScreenState extends State<StationDiaryScreen> {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                     child: AccordionCard(
-                      isExpanded: false,
-                      expanded: true,
                       title: _stepTitles[_currentStep],
-                      onTap: () {
-
-                      },
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -330,10 +317,7 @@ class _StationDiaryScreenState extends State<StationDiaryScreen> {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                     child: AccordionCard(
-                      isExpanded: false,
-                      expanded: true,
                       title: _stepTitles[_currentStep],
-                      onTap: () {},
                       child: SizedBox(
                         width: ResponsiveHelper.width(context, 200),
                         child: CustButton(
@@ -356,10 +340,7 @@ class _StationDiaryScreenState extends State<StationDiaryScreen> {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                     child: AccordionCard(
-                      isExpanded: false,
-                      expanded: true,
                       title: _stepTitles[_currentStep],
-                      onTap: () {},
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -539,10 +520,7 @@ class _StationDiaryScreenState extends State<StationDiaryScreen> {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                     child: AccordionCard(
-                      isExpanded: false,
-                      expanded: true,
                       title: _stepTitles[_currentStep],
-                      onTap: () {},
                       child: SizedBox(
                         width: ResponsiveHelper.width(context, 200),
                         child: CustButton(
@@ -564,10 +542,8 @@ class _StationDiaryScreenState extends State<StationDiaryScreen> {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                     child: AccordionCard(
-                      isExpanded: false,
-                      expanded: true,
+
                       title: _stepTitles[_currentStep],
-                      onTap: () {},
                       child: SizedBox(
                         width: ResponsiveHelper.width(context, 200),
                         child: CustButton(
@@ -589,10 +565,7 @@ class _StationDiaryScreenState extends State<StationDiaryScreen> {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                     child: AccordionCard(
-                      isExpanded: false,
-                      expanded: true,
                       title: _stepTitles[_currentStep],
-                      onTap: () {},
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

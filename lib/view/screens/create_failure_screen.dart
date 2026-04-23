@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:om_appcart/controller/station_controller.dart';
+import 'package:om_appcart/feature/failure/controller/station_controller.dart';
 import 'package:om_appcart/constants/colors.dart';
 import 'package:om_appcart/utils/responsive_helper.dart';
 import '../../constants/app_data.dart';
@@ -237,10 +237,7 @@ class _CreateFailureScreenState extends State<CreateFailureScreen> with SingleTi
     return SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                 child: AccordionCard(
-                  isExpanded: false,
-                  expanded: true,
                   title: _stepTitles[_currentStep],
-                  onTap: () {},
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -349,10 +346,7 @@ class _CreateFailureScreenState extends State<CreateFailureScreen> with SingleTi
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                       child: AccordionCard(
-                        isExpanded: false,
-                        expanded: true,
                         title: _stepTitles[_currentStep],
-                        onTap: () {},
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -539,10 +533,7 @@ class _CreateFailureScreenState extends State<CreateFailureScreen> with SingleTi
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: AccordionCard(
-        isExpanded: false,
-        expanded: true,
         title: _stepTitles[_currentStep],
-        onTap: () {},
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

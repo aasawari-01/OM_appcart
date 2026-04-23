@@ -52,7 +52,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
       _controller.nextPage(
           duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
     } else {
-      // Navigate to home screen
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => LoginView()),
@@ -71,11 +70,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
       parent: _progressController,
       curve: Curves.easeInOutCubic,
     );
-    // Initialize progress to first page (1/length)
     final double initialProgress = 1 / onboardingData.length;
     _progressTween = Tween<double>(begin: initialProgress, end: initialProgress);
 
-    // Start with initial progress value set
     _progressController.value = 1.0;
   }
 
@@ -97,7 +94,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
             onPageChanged: (index) {
               final double previous = (currentPage + 1) / onboardingData.length;
               final double next = (index + 1) / onboardingData.length;
-              // Ensure controller is at start before animating to avoid visual jump
               _progressController.stop();
               _progressController.value = 0;
               setState(() {
@@ -219,8 +215,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
       height: 8,
       width: currentPage == index ? 20 : 8,
       decoration: BoxDecoration(
-        color:
-            currentPage == index ? AppColors.blue : AppColors.grey,
+        color: currentPage == index ? AppColors.blue : AppColors.grey,
         borderRadius: BorderRadius.circular(12),
       ),
     );
@@ -259,7 +254,7 @@ class OnboardingContent extends StatelessWidget {
             textAlign: TextAlign.center,
             fontWeightName: FontWeight.w700,
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: ResponsiveHelper.spacing(context, 12)),
           CustText(
             name: description,
             color: AppColors.textColor,

@@ -43,7 +43,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         child: Padding(
           padding: EdgeInsets.only(
             left: 16,
-            right: (actions != null && actions!.isNotEmpty) ? 1 : 16,
+            right: (actions != null && actions!.isNotEmpty) ? 15 : 16,
             top: 8,
             bottom: 8,
           ),

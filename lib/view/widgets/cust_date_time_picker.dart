@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:date_picker_plus/date_picker_plus.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 import '../../utils/app_date_utils.dart';
 import '../../constants/colors.dart';
 import '../../utils/responsive_helper.dart';
@@ -28,6 +29,119 @@ class CustDateTimePicker extends StatelessWidget {
   }) : super(key: key);
 
   Future<void> _pickDateTime(BuildContext context) async {
+    final DateTime initial = selectedDateTime ?? DateTime.now();
+
+    OmniDateTimePickerType omniType;
+    switch (pickerType) {
+      case CustDateTimePickerType.date:
+        omniType = OmniDateTimePickerType.date;
+        break;
+      case CustDateTimePickerType.time:
+        omniType = OmniDateTimePickerType.time;
+        break;
+      case CustDateTimePickerType.dateTime:
+      default:
+        omniType = OmniDateTimePickerType.dateAndTime;
+        break;
+    }
+
+    /// 🔥 PERFECT HEIGHTS (NO EXTRA SPACE)
+    double targetHeight;
+    switch (pickerType) {
+      case CustDateTimePickerType.date:
+        targetHeight = 370;
+        break;
+      case CustDateTimePickerType.time:
+        targetHeight = 260;
+        break;
+      case CustDateTimePickerType.dateTime:
+      default:
+        targetHeight = 600;
+        break;
+    }
+
+    final DateTime? picked = await showOmniDateTimePicker(
+      context: context,
+      initialDate: initial,
+      type: omniType,
+      firstDate: DateTime(1900, 1, 1),
+      lastDate: DateTime(2100, 12, 31),
+
+      is24HourMode: false,
+      isShowSeconds: false,
+      minutesInterval: 1,
+
+      /// 🔥 REMOVE EXTRA SPACE
+      padding: EdgeInsets.all(10),
+      borderRadius: const BorderRadius.all(Radius.circular(16)),
+
+      /// 🔥 PERFECT SIZE (NO EMPTY GAP)
+      constraints: BoxConstraints(
+        maxWidth: 300,
+        maxHeight: targetHeight,
+        minHeight: targetHeight,
+      ),
+
+      /// 🔥 SMOOTH ANIMATION
+      transitionBuilder: (context, anim1, anim2, child) {
+        return FadeTransition(
+          opacity: anim1,
+          child: ScrollConfiguration(
+            behavior: const ScrollBehavior().copyWith(
+              physics: const NeverScrollableScrollPhysics(), // 🔥 disables scroll
+            ),
+            child: child!,
+          ),
+        );
+      },
+
+      transitionDuration: const Duration(milliseconds: 200),
+      barrierDismissible: true,
+
+      /// 🔥 CLEAN THEME
+      theme: ThemeData(
+        useMaterial3: true,
+
+        dialogTheme: DialogThemeData(
+          insetPadding: EdgeInsets.zero,
+          actionsPadding: EdgeInsets.zero,
+          constraints: BoxConstraints.tightFor(height: targetHeight)
+        ),
+
+        colorScheme: const ColorScheme.light(
+          primary: AppColors.blue,
+          onPrimary: Colors.white,
+          surface: AppColors.white1,
+          onSurface: AppColors.textColor,
+        ),
+
+        textTheme: GoogleFonts.outfitTextTheme(
+          Theme.of(context).textTheme,
+        ).copyWith(
+          titleLarge: GoogleFonts.outfit(
+            color: AppColors.blue,
+            fontWeight: FontWeight.w700,
+            fontSize: 16,
+          ),
+          bodyLarge: GoogleFonts.outfit(
+            color: AppColors.textColor,
+          ),
+          bodyMedium: GoogleFonts.outfit(
+            color: AppColors.textColor,
+          ),
+        ),
+      ),
+    );
+
+    if (picked != null) {
+      onDateTimeSelected(picked);
+    }
+  }
+  /* 
+  // Old implementation using date_picker_plus and showTimePicker
+  // Commented out to switch to omni_datetime_picker as requested
+  
+  Future<void> _pickDateTime_old(BuildContext context) async {
     final DateTime initial = selectedDateTime ?? DateTime.now();
 
     if (pickerType == CustDateTimePickerType.time) {
@@ -321,6 +435,7 @@ class CustDateTimePicker extends StatelessWidget {
   //     },
   //   );
   // }
+  */
 
   @override
   Widget build(BuildContext context) {
@@ -358,7 +473,7 @@ class CustDateTimePicker extends StatelessWidget {
               suffixIcon: Icon(
                 pickerType == CustDateTimePickerType.time ? Icons.access_time : Icons.calendar_today,
                 size: 24,
-                color: AppColors.textColor4,
+                color: AppColors.iconColor,
               ),
             ),
           ),

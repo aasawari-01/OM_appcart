@@ -3,6 +3,7 @@ import 'package:om_appcart/constants/colors.dart';
 import 'package:om_appcart/view/screens/view_detail_screen.dart' hide DetailColumn;
 import 'package:om_appcart/view/widgets/skeleton_loader.dart';
 
+import '../../feature/failure/view/failure_form.dart';
 import '../../utils/responsive_helper.dart';
 import '../widgets/cust_text.dart';
 import '../widgets/custom_app_bar.dart';
@@ -306,7 +307,7 @@ class _FailureListScreenState extends State<FailureListScreen> with SingleTicker
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => CreateFailureScreen()),
+              MaterialPageRoute(builder: (context) => FailureForm()),
             );
           },
         ),

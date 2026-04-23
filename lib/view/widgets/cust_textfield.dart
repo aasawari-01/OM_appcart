@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'dart:ui';
 import 'package:flutter/services.dart';
 
+import '../../constants/app_constants.dart';
 import '../../constants/colors.dart';
 import '../../utils/responsive_helper.dart';
 import 'cust_text.dart';
@@ -70,12 +71,8 @@ class CustomTextField extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (label != null) ...[
-            CustText(
-              name: label!,
-              size: 1.6,
-              fontWeightName: FontWeight.w500,
-            ),
-            SizedBox(height: ResponsiveHelper.spacing(context, 4)),
+            CustText.formLabel(label!),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.labelSpacing)),
           ],
           TextFormField(
         enabled: enabled,

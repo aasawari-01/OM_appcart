@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:get/get.dart';
@@ -11,111 +10,29 @@ import '../../../view/widgets/custom_app_bar.dart';
 import '../controller/user_profile_controller.dart';
 import '../model/user_profile_model.dart';
 import '../../../view/widgets/skeleton_loader.dart';
+import '../../../view/widgets/cust_loader.dart';
 import '../../../service/network_service/app_urls.dart';
 import '../../../utils/string_utils.dart';
 import 'edit_profile_view.dart';
 import 'package:om_appcart/view/widgets/full_image_viewer.dart';
+import '../../../constants/strings.dart';
+import '../../../constants/app_constants.dart';
+import '../../../constants/app_images.dart';
 
-class ProfileView extends StatefulWidget {
+class ProfileView extends GetView<UserProfileController> {
   const ProfileView({super.key});
 
   @override
-  State<ProfileView> createState() => _ProfileViewState();
-}
-
-class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStateMixin {
-  final UserProfileController controller = Get.put(UserProfileController());
-  
-  bool _isPersonalExpanded = true;
-  bool _isPermanentAddressExpanded = true;
-  bool _isCurrentAddressExpanded = true;
-  bool _isEmployeeExpanded = true;
-  bool _isFinanceExpanded = true;
-
-  late TabController _tabController;
-  final ScrollController _scrollController = ScrollController();
-
-  final GlobalKey _personalKey = GlobalKey();
-  final GlobalKey _employeeKey = GlobalKey();
-  final GlobalKey _financeKey = GlobalKey();
-
-  bool _isScrollingFromAuto = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-    _scrollController.addListener(_scrollListener);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    _scrollController.removeListener(_scrollListener);
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _scrollListener() {
-    if (_isScrollingFromAuto) return;
-
-    final personalOffset = _getOffset(_personalKey);
-    final employeeOffset = _getOffset(_employeeKey);
-    final financeOffset = _getOffset(_financeKey);
-
-    if (_scrollController.offset >= (financeOffset - 100)) {
-      if (_tabController.index != 2) _tabController.animateTo(2);
-    } else if (_scrollController.offset >= (employeeOffset - 100)) {
-      if (_tabController.index != 1) _tabController.animateTo(1);
-    } else {
-      if (_tabController.index != 0) _tabController.animateTo(0);
-    }
-  }
-
-  double _getOffset(GlobalKey key) {
-    final RenderBox? renderBox = key.currentContext?.findRenderObject() as RenderBox?;
-    if (renderBox == null) return 0;
-    return renderBox.localToGlobal(Offset.zero, ancestor: null).dy + _scrollController.offset - 250;
-  }
-
-  void _scrollToSection(int index) {
-    _isScrollingFromAuto = true;
-    _tabController.animateTo(index);
-    
-    GlobalKey targetKey;
-    switch (index) {
-      case 0: targetKey = _personalKey; break;
-      case 1: targetKey = _employeeKey; break;
-      case 2: targetKey = _financeKey; break;
-      default: targetKey = _personalKey;
-    }
-
-    final context = targetKey.currentContext;
-    if (context != null) {
-      Scrollable.ensureVisible(
-        context,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeInOut,
-      ).then((_) {
-        _isScrollingFromAuto = false;
-      });
-    } else {
-      _isScrollingFromAuto = false;
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    if (!Get.isRegistered<UserProfileController>()) {
+      Get.put(UserProfileController());
+    }
+
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'My Profile',
+        title: AppStrings.myProfile,
         showDrawer: false,
         actions: [
-          // IconButton(
-          //   padding: EdgeInsets.zero,
-          //   icon: const Icon(TablerIcons.edit, color: AppColors.gradientStart),
-          //   onPressed: () => Get.to(() => const EditProfileView()),
-          // ),
           GestureDetector(
             onTap: () => Get.to(() => const EditProfileView()),
             child: const Icon(TablerIcons.edit, color: AppColors.gradientStart),
@@ -124,24 +41,11 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
       ),
       body: Obx(() {
         if (controller.isLoading.value && controller.profileData.value == null) {
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                SkeletonLoader.card(height: 150),
-                const SizedBox(height: 20),
-                SkeletonLoader.paragraph(lines: 4),
-                const SizedBox(height: 20),
-                SkeletonLoader.paragraph(lines: 4),
-              ],
-            ),
-          );
+          return const CustLoader();
         }
-
         final data = controller.profileData.value;
-
         return CustomScrollView(
-          controller: _scrollController,
+          controller: controller.scrollController,
           slivers: [
             SliverToBoxAdapter(
               child: Column(
@@ -157,18 +61,16 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
               ),
             ),
             SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 0, bottom: 24),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 16),
-                    Container(key: _personalKey, child: _buildPersonalDetailsTab(data)),
-                    const SizedBox(height: 16),
-                    Container(key: _employeeKey, child: _buildEmployeeDetailsTab(data)),
-                    const SizedBox(height: 16),
-                    Container(key: _financeKey, child: _buildFinanceDetailsTab(data)),
-                  ],
-                ),
+              child: Column(
+                children: [
+                  SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.sectionSpacing)),
+                  Container(key: controller.personalKey, child: _buildPersonalDetailsTab(context, data)),
+                  SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.sectionSpacing)),
+                  Container(key: controller.employeeKey, child: _buildEmployeeDetailsTab(context, data)),
+                  SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.sectionSpacing)),
+                  Container(key: controller.financeKey, child: _buildFinanceDetailsTab(context, data)),
+                  SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.sectionSpacing)),
+                ],
               ),
             ),
           ],
@@ -181,14 +83,6 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
     return Container(
       decoration: BoxDecoration(
         color: AppColors.white1,
-        // boxShadow: const [
-        //   BoxShadow(
-        //     color: Color.fromRGBO(133, 133, 133, 0.25),
-        //     blurRadius: 10,
-        //     spreadRadius: 0,
-        //     offset: Offset(0, 0),
-        //   ),
-        // ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -197,7 +91,7 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
           Stack(
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: EdgeInsets.all(ResponsiveHelper.spacing(context, AppConstants.cardPadding)),
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment(-1, -0.2),
@@ -207,10 +101,6 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
                       Color(0xFF5CC1E5),
                     ],
                   ),
-                  // borderRadius: BorderRadius.only(
-                  //   topLeft: Radius.circular(8),
-                  //   topRight: Radius.circular(8),
-                  // ),
                 ),
                 child: Row(
                   children: [
@@ -219,28 +109,27 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
                         Obx(() {
                           final imageFile = controller.selectedImage.value;
                           final profilePicUrl = data?.profilePic;
-
                           return GestureDetector(
                             onTap: () {
                               final provider = imageFile != null
                                   ? FileImage(imageFile)
                                   : (profilePicUrl != null && profilePicUrl.isNotEmpty
                                   ? NetworkImage(profilePicUrl.startsWith('http') ? profilePicUrl : "${AppUrls.baseUrl}$profilePicUrl")
-                                      : const AssetImage('assets/images/drawer/profile_pic.png')) as ImageProvider;
-                              FullImageViewer.show(context, imageProvider: provider, heroTag: 'profile_pic');
+                                      : const AssetImage(AppAssets.profilePic)) as ImageProvider;
+                              FullImageViewer.show(context, imageProvider: provider, heroTag: 'profilePic');
                             },
                             child: Hero(
-                              tag: 'profile_pic',
+                              tag: 'profilePic',
                               child: SizedBox(
-                                height: 56,
+                                height: ResponsiveHelper.height(context, 56),
                                 child: CircleAvatar(
-                                  radius: 35,
+                                  radius: ResponsiveHelper.spacing(context, 35),
                                   backgroundColor: AppColors.white1,
                                   backgroundImage: imageFile != null
                                       ? FileImage(imageFile)
                                       : (profilePicUrl != null && profilePicUrl.isNotEmpty
                                       ? NetworkImage(profilePicUrl.startsWith('http') ? profilePicUrl : "${AppUrls.baseUrl}$profilePicUrl")
-                                          : const AssetImage('assets/images/drawer/profile_pic.png')) as ImageProvider,
+                                          : const AssetImage(AppAssets.profilePic)) as ImageProvider,
                                 ),
                               ),
                             ),
@@ -248,19 +137,19 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
                         }),
                       ],
                     ),
-                    SizedBox(width: 10,),
+                    SizedBox(width: ResponsiveHelper.width(context, AppConstants.elementSpacing)),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CustText(
-                            name: '${data?.firstName.toTitleCase() ?? ""} ${data?.lastName.toTitleCase() ?? ""}',
+                            name: '${data?.firstName.toTitle() ?? ""} ${data?.lastName.toTitle() ?? ""}',
                             size: 1.8,
                             color: AppColors.white1,
                             fontWeightName: FontWeight.w600,
                           ),
                           CustText(
-                            name: (data?.designation?.name ?? 'Station Controller').toTitleCase(),
+                            name: (data?.designation?.name ?? '').toTitle(),
                             size: 1.4,
                             color: AppColors.white2,
                             fontWeightName: FontWeight.w400,
@@ -274,22 +163,22 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
               Positioned(
                   right: 10,
                   top: 10,
-                  child: Image.asset("assets/images/profile_BG.png",height: ResponsiveHelper.height(context, 80),))
+                  child: Image.asset(AppAssets.profileBg,height: ResponsiveHelper.height(context, 80),))
             ],
           ),
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(ResponsiveHelper.spacing(context, AppConstants.cardPadding)),
             child: Column(
               children: [
                 _buildHeaderRow('Emp No :', data?.userDetails?.employeeID ?? data?.uniqueCode ?? 'N/A'),
-                const SizedBox(height: 4),
-                _buildHeaderRow('Department :', data?.departments?.isNotEmpty == true ? data!.departments!.map((e) => e.name.toTitleCase()).join(", ") : 'NA'),
-                const SizedBox(height: 4),
+                SizedBox(height: ResponsiveHelper.spacing(context, 4)),
+                _buildHeaderRow('Department :', data?.departments?.isNotEmpty == true ? data!.departments!.map((e) => e.name.toTitle()).join(", ") : 'NA'),
+                SizedBox(height: ResponsiveHelper.spacing(context, 4)),
                 _buildHeaderRow(
                   'Allocated Stations :',
-                  data?.stations?.isNotEmpty == true ? data!.stations!.map((e) => e.name.toTitleCase()).join(", ") : 'N/A',
+                  data?.stations?.isNotEmpty == true ? data!.stations!.map((e) => e.name.toTitle()).join(", ") : 'N/A',
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: ResponsiveHelper.spacing(context, 4)),
                 _buildHeaderRow('Date of Joining :', data?.userDetails?.dateOfJoining ?? 'N/A'),
               ],
             ),
@@ -305,21 +194,11 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
       children: [
         Expanded(
           flex: 2,
-          child: CustText(
-            name: label,
-            size: 1.5,
-            color: AppColors.textColor5,
-            fontWeightName: FontWeight.w400,
-          ),
+          child: CustText.detailLabel(label)
         ),
         Expanded(
           flex: 3,
-          child: CustText(
-            name: value,
-            size: 1.6,
-            color: AppColors.textColor5,
-            fontWeightName: FontWeight.w600,
-          ),
+          child: CustText.detailValue(value)
         ),
       ],
     );
@@ -332,7 +211,7 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
         border: Border(bottom: BorderSide(color: AppColors.dividerColor2, width: 1),top:  BorderSide(color: AppColors.dividerColor2, width: 1)),
       ),
       child: TabBar(
-        controller: _tabController,
+        controller: controller.tabController,
         labelColor: AppColors.blue,
         isScrollable: true,
         tabAlignment: TabAlignment.start,
@@ -341,67 +220,54 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
         indicatorSize: TabBarIndicatorSize.tab,
         labelStyle: GoogleFonts.outfit(fontWeight: FontWeight.w600, fontSize: 16),
         unselectedLabelStyle: GoogleFonts.outfit(fontWeight: FontWeight.w400, fontSize: 16),
-        onTap: (index) => _scrollToSection(index),
+        onTap: (index) => controller.scrollToSection(index),
         tabs: const [
-          Tab(text: 'Personal Details'),
-          Tab(text: 'Employee Details'),
-          Tab(text: 'Finance Details'),
+          Tab(text: AppStrings.personalDetails),
+          Tab(text: AppStrings.employeeDetails),
+          Tab(text: AppStrings.financeDetails),
         ],
       ),
     );
   }
 
-  Widget _buildPersonalDetailsTab(UserProfileData? data) {
+  Widget _buildPersonalDetailsTab(BuildContext context, UserProfileData? data) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AccordionCard(
-            title: 'Personal Details',
-            isExpanded: true,
-            expanded: _isPersonalExpanded,
-            onTap: () => setState(() => _isPersonalExpanded = !_isPersonalExpanded),
-            child: Column(
-              children: [
-                _detailRow('Name', '${data?.firstName.toTitleCase() ?? ""} ${data?.lastName.toTitleCase() ?? ""}', 'Date of Birth', data?.userDetails?.dateOfBirth ?? 'N/A'),
-                const SizedBox(height: 16),
-                _detailRow('Gender', data?.userDetails?.gender?.toTitleCase() ?? 'N/A', 'Birth Place', data?.userDetails?.birthPlace?.toTitleCase() ?? 'N/A'),
-                const SizedBox(height: 16),
-                _detailRow('Contact Number', data?.contactNo ?? 'N/A', 'Alternate Contact Number', data?.userDetails?.alternateContactNo ?? 'N/A'),
-                const SizedBox(height: 16),
-                _detailRow('Pan Card', data?.userDetails?.panCardNo?.toUpperCase() ?? 'N/A', 'Aadhar Card', data?.userDetails?.aadharCardNo ?? 'N/A'),
-                const SizedBox(height: 16),
-                _detailRow('Blood Group', data?.userDetails?.bloodGroup ?? 'N/A', 'Shift Type', data?.userDetails?.shiftType?.toTitleCase() ?? 'N/A'),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          AccordionCard(
-            title: 'Permanent Address',
-            isExpanded: true,
-            expanded: _isPermanentAddressExpanded,
-            onTap: () => setState(() => _isPermanentAddressExpanded = !_isPermanentAddressExpanded),
-            child: _buildAddressDetails(data?.userDetails?.permanentAddress),
-          ),
-          const SizedBox(height: 16),
-          AccordionCard(
-            title: 'Current Address',
-            isExpanded: true,
-            expanded: _isCurrentAddressExpanded,
-            onTap: () => setState(() => _isCurrentAddressExpanded = !_isCurrentAddressExpanded),
-            child: _buildAddressDetails(data?.userDetails?.currentAddress),
-          ),
-        ],
+      padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.spacing(context, AppConstants.horizontalPadding)),
+      child: AccordionCard(
+        title: AppStrings.personalDetails,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _detailRow(context, AppStrings.nameLabel, '${data?.firstName.toTitle() ?? ""} ${data?.lastName.toTitle() ?? ""}', AppStrings.dateOfBirth, data?.userDetails?.dateOfBirth ?? AppStrings.notAvailable),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+            _detailRow(context, AppStrings.gender, data?.userDetails?.gender?.toTitle() ?? AppStrings.notAvailable, AppStrings.birthPlace, data?.userDetails?.birthPlace?.toTitle() ?? AppStrings.notAvailable),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+            _detailRow(context, AppStrings.contactNumber, data?.contactNo ?? AppStrings.notAvailable, AppStrings.altContactNumber, data?.userDetails?.alternateContactNo ?? AppStrings.notAvailable),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+            _detailRow(context, AppStrings.panCard, data?.userDetails?.panCardNo?.toUpperCase() ?? AppStrings.notAvailable, AppStrings.aadharCard, data?.userDetails?.aadharCardNo ?? AppStrings.notAvailable),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+            _detailRow(context, AppStrings.bloodGroup, data?.userDetails?.bloodGroup ?? AppStrings.notAvailable, AppStrings.shiftType, data?.userDetails?.shiftType?.toTitle() ?? AppStrings.notAvailable),
+            
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.sectionSpacing)),
+            CustText.sectionHeader(AppStrings.permanentAddress),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+            _buildAddressDetails(context, data?.userDetails?.permanentAddress),
+            
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.sectionSpacing)),
+            CustText.sectionHeader(AppStrings.currentAddress),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+            _buildAddressDetails(context, data?.userDetails?.currentAddress),
+          ],
+        ),
       ),
     );
   }
 
 
 
-  Widget _buildAddressDetails(String? addressStr) {
+  Widget _buildAddressDetails(BuildContext context, String? addressStr) {
     if (addressStr == null || addressStr.isEmpty || addressStr == 'N/A') {
-      return Text('N/A', style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.textColor));
+      return Text(AppStrings.notAvailable, style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.textColor));
     }
     
     List<String> parts = addressStr.split('|');
@@ -409,18 +275,18 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _detailRow('Residency / House No.', parts[0].isEmpty ? 'N/A' : parts[0], 'Locality / Town / Village', parts[1].isEmpty ? 'N/A' : parts[1]),
-          const SizedBox(height: 16),
-          _detailRow('Pincode', parts[2].isEmpty ? 'N/A' : parts[2], 'City', parts[3].isEmpty ? 'N/A' : parts[3]),
-          const SizedBox(height: 16),
-          _detailRow('State', parts[4].isEmpty ? 'N/A' : parts[4], 'Country', parts[5].isEmpty ? 'N/A' : parts[5]),
+          _detailRow(context, AppStrings.resHouseNo, parts[0].isEmpty ? AppStrings.notAvailable : parts[0], AppStrings.localityTownVillage, parts[1].isEmpty ? AppStrings.notAvailable : parts[1]),
+          SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+          _detailRow(context, AppStrings.pincode, parts[2].isEmpty ? AppStrings.notAvailable : parts[2], AppStrings.city, parts[3].isEmpty ? AppStrings.notAvailable : parts[3]),
+          SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+          _detailRow(context, AppStrings.state, parts[4].isEmpty ? AppStrings.notAvailable : parts[4], AppStrings.country, parts[5].isEmpty ? AppStrings.notAvailable : parts[5]),
         ],
       );
     }
 
     // Fallback display
     return Text(
-      addressStr.toTitleCase(),
+      addressStr.toTitle(),
       style: GoogleFonts.outfit(
         fontSize: 15,
         fontWeight: FontWeight.w500,
@@ -429,79 +295,63 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
     );
   }
 
-  Widget _buildEmployeeDetailsTab(UserProfileData? data) {
+  Widget _buildEmployeeDetailsTab(BuildContext context, UserProfileData? data) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.spacing(context, AppConstants.horizontalPadding)),
       child: AccordionCard(
-        title: 'Employee Details',
-        isExpanded: true,
-        expanded: _isEmployeeExpanded,
-        onTap: () => setState(() => _isEmployeeExpanded = !_isEmployeeExpanded),
+        title: AppStrings.employeeDetails,
         child: Column(
           children: [
-            _detailRow('Date of Joining', data?.userDetails?.dateOfJoining ?? 'N/A', 'City', data?.cities?.isNotEmpty == true ? data!.cities!.first.name.toTitleCase() : 'N/A'),
-            const SizedBox(height: 16),
-            _detailRow('Department', data?.departments?.isNotEmpty == true ? data!.departments!.first.name.toTitleCase() : 'N/A', 'Station', data?.stations?.isNotEmpty == true ? data!.stations!.first.name.toTitleCase() : 'N/A'),
-            const SizedBox(height: 16),
-            _detailRow('Role', data?.role?.name.toTitleCase() ?? 'N/A', 'Designation', data?.designation?.name.toTitleCase() ?? 'N/A'),
-            const SizedBox(height: 16),
-            _detailRow('Duty Shift', data?.userDetails?.shiftType?.toTitleCase() ?? 'N/A', '', ''),
+            _detailRow(context, AppStrings.dateOfJoining, data?.userDetails?.dateOfJoining ?? AppStrings.notAvailable, AppStrings.city, data?.cities?.isNotEmpty == true ? data!.cities!.first.name.toTitle() : AppStrings.notAvailable),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+            _detailRow(context, AppStrings.department, data?.departments?.isNotEmpty == true ? data!.departments!.first.name.toTitle() : AppStrings.notAvailable, AppStrings.station, data?.stations?.isNotEmpty == true ? data!.stations!.first.name.toTitle() : AppStrings.notAvailable),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+            _detailRow(context, AppStrings.role, data?.role?.name.toTitle() ?? AppStrings.notAvailable, AppStrings.designation, data?.designation?.name.toTitle() ?? AppStrings.notAvailable),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+            _detailRow(context, AppStrings.dutyShift, data?.userDetails?.shiftType?.toTitle() ?? AppStrings.notAvailable, '', ''),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildFinanceDetailsTab(UserProfileData? data) {
+  Widget _buildFinanceDetailsTab(BuildContext context, UserProfileData? data) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.spacing(context, AppConstants.horizontalPadding)),
       child: AccordionCard(
-        title: 'Finance Details',
-        isExpanded: true,
-        expanded: _isFinanceExpanded,
-        onTap: () => setState(() => _isFinanceExpanded = !_isFinanceExpanded),
+        title: AppStrings.financeDetails,
         child: Column(
           children: [
-            _detailRow('Bank Name', 'N/A', 'Account Number', 'N/A'),
-            const SizedBox(height: 16),
-            _detailRow('IFSC Code', 'N/A', 'Branch Name', 'N/A'),
+            _detailRow(context, AppStrings.bankName, AppStrings.notAvailable, AppStrings.accountNumber, AppStrings.notAvailable),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+            _detailRow(context, AppStrings.ifscCode, AppStrings.notAvailable, AppStrings.branchName, AppStrings.notAvailable),
           ],
         ),
       ),
     );
   }
 
-  Widget _detailRow(String leftLabel, String leftValue, String rightLabel, String rightValue) {
+  Widget _detailRow(BuildContext context, String leftLabel, String leftValue, String rightLabel, String rightValue) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(child: _detailItem(leftLabel, leftValue)),
-        const SizedBox(width: 16),
+        Expanded(child: _detailItem(context, leftLabel, leftValue)),
+        SizedBox(width: ResponsiveHelper.width(context, AppConstants.elementSpacing)),
         if (rightLabel.isNotEmpty)
-          Expanded(child: _detailItem(rightLabel, rightValue))
+          Expanded(child: _detailItem(context, rightLabel, rightValue))
         else
           const Spacer(),
       ],
     );
   }
 
-  Widget _detailItem(String label, String value) {
+  Widget _detailItem(BuildContext context, String label, String value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustText(
-          name: label,
-          size: 1.4,
-          color: AppColors.textColor.withOpacity(0.5),
-          fontWeightName: FontWeight.w400,
-        ),
-        const SizedBox(height: 4),
-        CustText(
-          name: value,
-          size: 1.5,
-          color: AppColors.textColor,
-          fontWeightName: FontWeight.w600,
-        ),
+       CustText.detailLabel(label),
+        SizedBox(height: ResponsiveHelper.spacing(context, 4)),
+        CustText.detailValue(value),
       ],
     );
   }

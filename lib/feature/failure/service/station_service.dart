@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import './network_service/api_client.dart';
-import './network_service/app_urls.dart';
-import '../feature/lost&found/model/lost_found_table_record.dart'; // Reusing Station model for now
+import '../../../service/network_service/api_client.dart';
+import '../../../service/network_service/app_urls.dart';
+import '../../lost_and_found/model/lost_found_table_record.dart'; // Reusing Station model for now
 
 class StationListResponse {
   final bool status;

@@ -178,9 +178,6 @@ class _PTWFormScreenState extends State<PTWFormScreen> {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: AccordionCard(
-        expanded: true,
-        onTap: () {},
-        isExpanded: false,
         title: _stepTitles[_currentStep],
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -286,9 +283,6 @@ class _PTWFormScreenState extends State<PTWFormScreen> {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: AccordionCard(
-        expanded: true,
-        onTap: () {},
-        isExpanded: false,
         title: _stepTitles[_currentStep],
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -428,9 +422,6 @@ class _PTWFormScreenState extends State<PTWFormScreen> {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: AccordionCard(
-        expanded: true,
-        onTap: () {},
-        isExpanded: false,
         title: _stepTitles[_currentStep],
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -497,9 +488,6 @@ class _PTWFormScreenState extends State<PTWFormScreen> {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: AccordionCard(
-        expanded: true,
-        onTap: () {},
-        isExpanded: false,
         title: _stepTitles[_currentStep],
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -513,7 +501,6 @@ class _PTWFormScreenState extends State<PTWFormScreen> {
               onDateTimeSelected: (dateTime) {
                 setState(() {
                   _selectedFromDateTime = dateTime;
-                  // Clear "To Date & Time" when "From Date & Time" changes
                   if (_selectedToDateTime != null && dateTime != null && _selectedToDateTime!.isBefore(dateTime)) {
                     _selectedToDateTime = null;
                   }

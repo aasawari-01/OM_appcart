@@ -14,4 +14,8 @@ class AppAssets {
 
   // Login / splash images
   static const String metroBackground = 'assets/images/metro.png';
+
+  // Profile images
+  static const String profilePic = 'assets/images/drawer/profile_pic.png';
+  static const String profileBg = 'assets/images/profile_BG.png';
 }

@@ -132,18 +132,9 @@ class ListItemCardType1 extends StatelessWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    CustText(
-                                      name: col.label,
-                                      size: 1.2,
-                                      color: AppColors.textColor4,
-                                    ),
+                                    CustText.detailLabel(col.label),
                                     const SizedBox(height: 2),
-                                    CustText(
-                                      name: col.value,
-                                      size: 1.4,
-                                      color: Colors.black87,
-                                      fontWeightName: FontWeight.w500,
-                                    ),
+                                    CustText.detailValue(col.value),
                                   ],
                                 ),
                               ))

@@ -171,9 +171,6 @@ class _ShiftAbstractRegisterFormState extends State<ShiftAbstractRegisterForm> {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: AccordionCard(
-        expanded: true,
-        onTap: () {},
-        isExpanded: false,
         title: _stepTitles[_currentStep],
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -348,9 +345,6 @@ class _ShiftAbstractRegisterFormState extends State<ShiftAbstractRegisterForm> {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: AccordionCard(
-        expanded: true,
-        onTap: () {},
-        isExpanded: false,
         title: _stepTitles[_currentStep],
         child: SizedBox(
           width: ResponsiveHelper.width(context, 200),
@@ -373,9 +367,6 @@ class _ShiftAbstractRegisterFormState extends State<ShiftAbstractRegisterForm> {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: AccordionCard(
-        expanded: true,
-        onTap: () {},
-        isExpanded: false,
         title: _stepTitles[_currentStep],
         child: SizedBox(
           width: ResponsiveHelper.width(context, 200),
@@ -398,9 +389,6 @@ class _ShiftAbstractRegisterFormState extends State<ShiftAbstractRegisterForm> {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: AccordionCard(
-        expanded: true,
-        onTap: () {},
-        isExpanded: false,
         title: _stepTitles[_currentStep],
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

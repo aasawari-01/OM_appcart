@@ -96,9 +96,6 @@ class _TomShiftLoginFormState extends State<TomShiftLoginForm> {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: AccordionCard(
-        expanded: true,
-        onTap: () {},
-        isExpanded: false,
         title: _stepTitles[_currentStep],
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

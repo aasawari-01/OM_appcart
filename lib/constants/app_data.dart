@@ -1,4 +1,4 @@
-import 'package:om_appcart/controller/station_controller.dart';
+import 'package:om_appcart/feature/failure/controller/station_controller.dart';
 import 'package:get/get.dart';
 
 // Department List

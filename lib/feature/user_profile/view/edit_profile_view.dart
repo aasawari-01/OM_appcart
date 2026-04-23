@@ -3,243 +3,39 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:om_appcart/view/widgets/cust_loader.dart';
 import 'package:om_appcart/view/widgets/full_image_viewer.dart';
-import 'package:om_appcart/view/widgets/custom_confirmation_dialog.dart';
-import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
-import 'package:om_appcart/utils/network_utils.dart';
-import 'package:om_appcart/view/widgets/custom_dialog.dart';
 import '../../../utils/app_date_utils.dart';
 
 import '../../../constants/colors.dart';
-import '../../../controller/station_controller.dart';
+import '../../../constants/app_constants.dart';
+import '../../../constants/strings.dart';
+import '../../failure/controller/station_controller.dart';
 import '../../../service/network_service/app_urls.dart';
 import '../../../utils/responsive_helper.dart';
+import '../../../utils/string_utils.dart';
 import '../../../view/widgets/cust_text.dart';
 import '../../../view/widgets/cust_textfield.dart';
 import '../../../view/widgets/cust_dropdown.dart';
 import '../../../view/widgets/custom_app_bar.dart';
 import '../../../view/widgets/cust_button.dart';
 import '../../../view/widgets/accordion_card.dart';
-import '../../../view/widgets/custom_snackbar.dart';
 import '../../../view/widgets/cust_date_time_picker.dart';
-import '../controller/user_profile_controller.dart';
-import '../model/user_profile_model.dart';
+import '../controller/edit_profile_controller.dart';
 
-class EditProfileView extends StatefulWidget {
+class EditProfileView extends GetView<EditProfileController> {
   const EditProfileView({super.key});
 
   @override
-  State<EditProfileView> createState() => _EditProfileViewState();
-}
-
-class _EditProfileViewState extends State<EditProfileView> with SingleTickerProviderStateMixin {
-  final UserProfileController controller = Get.find<UserProfileController>();
-  late TabController _tabController;
-  final ScrollController _scrollController = ScrollController();
-
-  final GlobalKey _personalKey = GlobalKey();
-  final GlobalKey _employeeKey = GlobalKey();
-  final GlobalKey _financeKey = GlobalKey();
-
-  // Personal Details Controllers
-  final firstNameController = TextEditingController();
-  final lastNameController = TextEditingController();
-  final empNoController = TextEditingController();
-  final contactNoController = TextEditingController();
-  final altContactNoController = TextEditingController();
-  final emailController = TextEditingController();
-  final dobController = TextEditingController();
-  final bloodGroupController = TextEditingController();
-  final birthPlaceController = TextEditingController();
-  
-  // Verification Details
-  final panCardController = TextEditingController();
-  final aadharCardController = TextEditingController();
-
-  // Current Address
-  final resHouseNoController = TextEditingController();
-  final localityController = TextEditingController();
-  final pincodeController = TextEditingController();
-  final cityController = TextEditingController();
-  final stateController = TextEditingController();
-  final countryController = TextEditingController();
-
-  // Permanent Address
-  final pResHouseNoController = TextEditingController();
-  final pLocalityController = TextEditingController();
-  final pPincodeController = TextEditingController();
-  final pCityController = TextEditingController();
-  final pStateController = TextEditingController();
-  final pCountryController = TextEditingController();
-
-  // Employee Details
-  final dojController = TextEditingController();
-  final empCityController = TextEditingController();
-  final deptController = TextEditingController();
-  final stationController = TextEditingController();
-  final roleController = TextEditingController();
-  final designationController = TextEditingController();
-
-  // Finance Details
-  final bankNameController = TextEditingController();
-  final accountNoController = TextEditingController();
-  final ifscController = TextEditingController();
-  final branchController = TextEditingController();
-
-  String selectedGender = 'Male';
-  String selectedShift = 'Morning';
-  bool sameAsCurrent = false;
-
-  String? _selectedStation;
-  List<String> stationListValue = [];
-
-  bool _isScrollingFromAuto = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-    _loadInitialData();
-    _scrollController.addListener(_scrollListener);
-    
-    // Ensure master data is being fetched/refreshed
-    Get.find<StationController>().fetchStations();
-    controller.fetchMasterData();
-    
-    print("DEBUG: EditProfileView.initState - Master Data Status: "
-          "Cities=${controller.cities.length}, "
-          "Depts=${controller.departmentTypes.length}, "
-          "Stations=${Get.find<StationController>().stations.length}");
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    _scrollController.removeListener(_scrollListener);
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _scrollListener() {
-    if (_isScrollingFromAuto) return;
-
-    final personalOffset = _getOffset(_personalKey);
-    final employeeOffset = _getOffset(_employeeKey);
-    final financeOffset = _getOffset(_financeKey);
-
-    if (_scrollController.offset >= (financeOffset - 100)) {
-      if (_tabController.index != 2) _tabController.animateTo(2);
-    } else if (_scrollController.offset >= (employeeOffset - 100)) {
-      if (_tabController.index != 1) _tabController.animateTo(1);
-    } else {
-      if (_tabController.index != 0) _tabController.animateTo(0);
-    }
-  }
-
-  double _getOffset(GlobalKey key) {
-    final RenderBox? renderBox = key.currentContext?.findRenderObject() as RenderBox?;
-    if (renderBox == null) return 0;
-    return renderBox.localToGlobal(Offset.zero, ancestor: null).dy + _scrollController.offset - 250; 
-    // -250 is an approximate adjustment for the header and tabs
-  }
-
-  void _scrollToSection(int index) {
-    _isScrollingFromAuto = true;
-    _tabController.animateTo(index);
-    
-    GlobalKey targetKey;
-    switch (index) {
-      case 0: targetKey = _personalKey; break;
-      case 1: targetKey = _employeeKey; break;
-      case 2: targetKey = _financeKey; break;
-      default: targetKey = _personalKey;
-    }
-
-    final context = targetKey.currentContext;
-    if (context != null) {
-      Scrollable.ensureVisible(
-        context,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeInOut,
-      ).then((_) {
-        _isScrollingFromAuto = false;
-      });
-    } else {
-      _isScrollingFromAuto = false;
-    }
-  }
-
-  /// Capitalizes the first letter of each word in the string.
-  String _capitalize(String? value) {
-    if (value == null || value.isEmpty) return '';
-    return value.split(' ').map((word) {
-      if (word.isEmpty) return word;
-      return word[0].toUpperCase() + word.substring(1);
-    }).join(' ');
-  }
-
-  void _loadInitialData() {
-    final data = controller.profileData.value;
-    if (data != null) {
-      firstNameController.text = _capitalize(data.firstName);
-      lastNameController.text = _capitalize(data.lastName);
-      emailController.text = data.emailID;
-      contactNoController.text = data.contactNo ?? '';
-      empNoController.text = data.userDetails?.employeeID ?? data.uniqueCode;
-      
-      final details = data.userDetails;
-      if (details != null) {
-        dobController.text = details.dateOfBirth ?? '';
-        dojController.text = details.dateOfJoining ?? '';
-
-        bloodGroupController.text = (details.bloodGroup ?? '').toUpperCase();
-        birthPlaceController.text = _capitalize(details.birthPlace);
-        panCardController.text = (details.panCardNo ?? '').toUpperCase();
-        aadharCardController.text = details.aadharCardNo ?? '';
-        altContactNoController.text = details.alternateContactNo ?? '';
-        selectedGender = details.gender ?? 'Male';
-        selectedShift = details.shiftType ?? 'Morning';
-        
-        void parseAddress(String? addressStr, TextEditingController house, TextEditingController locality, TextEditingController pin, TextEditingController city, TextEditingController state, TextEditingController country) {
-          if (addressStr == null || addressStr.isEmpty) return;
-          List<String> parts = addressStr.split('|');
-          if (parts.length == 6) {
-            house.text = _capitalize(parts[0]);
-            locality.text = _capitalize(parts[1]);
-            pin.text = parts[2]; // pincode stays as-is
-            city.text = _capitalize(parts[3]);
-            state.text = _capitalize(parts[4]);
-            country.text = _capitalize(parts[5]);
-          } else {
-            // Unstructured old data, put everything in house or try to comma split
-            List<String> commaParts = addressStr.split(', ').map((e) => e.trim()).toList();
-            if (commaParts.isNotEmpty) house.text = _capitalize(commaParts[0]);
-            if (commaParts.length > 1) locality.text = _capitalize(commaParts[1]);
-            if (commaParts.length > 2) city.text = _capitalize(commaParts[2]);
-            if (commaParts.length > 3) state.text = _capitalize(commaParts[3]);
-            if (commaParts.length > 4) pin.text = commaParts[4];
-          }
-        }
-
-        parseAddress(details.currentAddress, resHouseNoController, localityController, pincodeController, cityController, stateController, countryController);
-        parseAddress(details.permanentAddress, pResHouseNoController, pLocalityController, pPincodeController, pCityController, pStateController, pCountryController);
-      }
-
-      // Pre-fill some employee details from base model if available
-      if (data.cities != null && data.cities!.isNotEmpty) empCityController.text = data.cities!.first.name;
-      if (data.departments != null && data.departments!.isNotEmpty) deptController.text = data.departments!.first.name;
-      if (data.stations != null && data.stations!.isNotEmpty)   _selectedStation = data.stations!.first.name;
-      if (data.role != null) roleController.text = data.role!.name;
-      if (data.designation != null) designationController.text = data.designation!.name;
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    if (!Get.isRegistered<EditProfileController>()) {
+      Get.put(EditProfileController());
+    }
+
     return Scaffold(
       backgroundColor: AppColors.white1,
       appBar: CustomAppBar(
-        title: 'Edit Profile',
+        title: AppStrings.editProfile,
         showDrawer: false,
         isForm: true,
         onLeadingPressed: () => Get.back(),
@@ -249,161 +45,64 @@ class _EditProfileViewState extends State<EditProfileView> with SingleTickerProv
             children: [
               Column(
                 children: [
-                  _buildHeader(),
+                  _buildHeader(context),
                   _buildTabs(),
                   Expanded(
                     child: SingleChildScrollView(
-                      controller: _scrollController,
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      controller: controller.scrollController,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: ResponsiveHelper.spacing(context, AppConstants.horizontalPadding), 
+                        vertical: ResponsiveHelper.spacing(context, AppConstants.verticalPadding)
+                      ),
                       child: Column(
                         children: [
-                          _buildPersonalDetailsSection(),
-                          const SizedBox(height: 24),
-                          _buildEmployeeDetailsSection(),
-                          const SizedBox(height: 24),
-                          _buildFinanceDetailsSection(),
-                          const SizedBox(height: 10), // Extra space at bottom
+                          _buildPersonalDetailsSection(context),
+                          SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.sectionSpacing)),
+                          _buildEmployeeDetailsSection(context),
+                          SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.sectionSpacing)),
+                          _buildFinanceDetailsSection(context),
+                          SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.sectionSpacing)), // Extra space at bottom
                         ],
                       ),
                     ),
                   ),
                 ],
               ),
-              if (controller.isLoading.value)
-                Container(
-                  color: Colors.black.withOpacity(0.1),
-                  child: const Center(child: CircularProgressIndicator()),
-                ),
+              if (controller.profileController.isLoading.value)
+                CustLoader()
             ],
           )),
       bottomNavigationBar: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(ResponsiveHelper.spacing(context, 16.0)),
           child: Obx(() => CustButton(
-                name: 'Update',
-                onSelected: (_) async {
-                  // Check connectivity first
-                  bool isOnline = await NetworkUtils.checkConnectivity();
-                  if (!isOnline) {
-                    Get.dialog(
-                      CustomDialog(
-                        "You need an active internet connection to update your profile.",
-                        onOk: () => Get.back(),
-                      ),
-                      barrierDismissible: false,
-                    );
-                    return;
-                  }
-
-                  bool confirm = false;
-                  await CustomConfirmationDialog.show(
-                    title: 'Confirm Update',
-                    message: 'Are you sure you want to update your profile data?',
-                    confirmText: 'Update',
-                    confirmColor: AppColors.blue,
-                    icon: TablerIcons.device_floppy,
-                    onConfirm: () => confirm = true,
-                    onCancel: () => confirm = false,
-                  );
-
-                  if (!confirm) return;
-
-
-
-                  final _stationController = Get.find<StationController>();
-                  int? stationID = _stationController.getStationIdByName(_selectedStation);
-                  // Function to join address fields
-                  String joinAddress(
-                    TextEditingController house, TextEditingController locality, 
-                    TextEditingController pin, TextEditingController city, 
-                    TextEditingController state, TextEditingController country
-                  ) {
-                    return [house, locality, pin, city, state, country]
-                        .map((c) => c.text.replaceAll('|', '').trim())
-                        .join('|');
-                  }
-
-                  final userDetails = UserDetails(
-                    dateOfBirth: AppDateUtils.formatToApiDate(dobController.text),
-                    dateOfJoining: AppDateUtils.formatToApiDate(dojController.text),
-                    employeeID: empNoController.text,
-                    birthPlace: birthPlaceController.text,
-                    bloodGroup: bloodGroupController.text,
-                    currentAddress: joinAddress(
-                      resHouseNoController, localityController, pincodeController, 
-                      cityController, stateController, countryController
-                    ),
-                    permanentAddress: sameAsCurrent ? 
-                      joinAddress(
-                        resHouseNoController, localityController, pincodeController, 
-                        cityController, stateController, countryController
-                      ) : 
-                      joinAddress(
-                        pResHouseNoController, pLocalityController, pPincodeController, 
-                        pCityController, pStateController, pCountryController
-                      ),
-                    alternateContactNo: altContactNoController.text,
-                    gender: selectedGender,
-                    aadharCardNo: aadharCardController.text,
-                    panCardNo: panCardController.text,
-                    shiftType: selectedShift,
-
-                  );
-
-                  int? cityId = controller.getCityIdByName(empCityController.text);
-                  int? deptId = controller.getDepartmentIdByName(deptController.text);
-                  int? roleId = controller.getRoleIdByName(roleController.text);
-                  int? desigId = controller.getDesignationIdByName(designationController.text);
-
-                  print("DEBUG: EditProfileView - Resolved IDs: City=$cityId, Dept=$deptId, Station=$stationID, Role=$roleId, Desig=$desigId");
-
-                  bool success = await controller.updateProfile(
-                    firstName: firstNameController.text,
-                    lastName: lastNameController.text,
-                    email: emailController.text,
-                    contactNo: contactNoController.text,
-                    stationIDs: stationID != null ? [stationID] : null,
-                    cityIDs: cityId != null ? [cityId] : null,
-                    departmentIDs: deptId != null ? [deptId] : null,
-                    roleID: roleId,
-                    designationID: desigId,
-                    userDetails: userDetails,
-                  );
-                  if (success) {
-                    Get.dialog(
-                      CustomDialog("Profile updated successfully", onOk: () {
-                        Get.back(); // Close dialog
-                        Get.back(); // Go back to Profile View
-                      }),
-                      barrierDismissible: false,
-                    );
-                  }
-                },
-                isLoading: controller.isLoading.value,
+                name: AppStrings.update,
+                onSelected: (_) => controller.handleUpdate(),
+                isLoading: controller.profileController.isLoading.value,
               )),
         ),
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16),
+      padding: EdgeInsets.symmetric(vertical: ResponsiveHelper.spacing(context, 16)),
       child: Center(
         child: GestureDetector(
-          onTap: _showImagePickerOptions,
+          onTap: () => _showImagePickerOptions(context),
           child: Container(
             width: 100,
             height: 100,
             decoration: BoxDecoration(
-              color: Colors.grey.shade200,
+              color: AppColors.hintColor,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Stack(
               children: [
                 Obx(() {
-                  final imageFile = controller.selectedImage.value;
-                  final profilePicUrl = controller.profileData.value?.profilePic;
+                  final imageFile = controller.profileController.selectedImage.value;
+                  final profilePicUrl = controller.profileController.profileData.value?.profilePic;
 
                   Widget imageWidget;
                   if (imageFile != null) {
@@ -414,10 +113,10 @@ class _EditProfileViewState extends State<EditProfileView> with SingleTickerProv
                       fit: BoxFit.cover,
                       width: 100,
                       height: 100,
-                      errorBuilder: (context, error, stackTrace) => const Center(child: Icon(Icons.person, size: 50, color: Colors.grey)),
+                      errorBuilder: (context, error, stackTrace) => const Center(child: Icon(Icons.person, size: 50, color:AppColors.iconColor)),
                     );
                   } else {
-                    imageWidget = const Center(child: Icon(Icons.person, size: 50, color: Colors.grey));
+                    imageWidget = const Center(child: Icon(Icons.person, size: 50, color: AppColors.iconColor));
                   }
 
                   return Hero(
@@ -436,41 +135,41 @@ class _EditProfileViewState extends State<EditProfileView> with SingleTickerProv
     );
   }
 
-  void _showImagePickerOptions() {
+  void _showImagePickerOptions(BuildContext context) {
     Get.bottomSheet(
       Container(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(ResponsiveHelper.spacing(context, 16)),
         decoration: const BoxDecoration(
-          color: Colors.white,
+          color: AppColors.white1,
           borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const CustText(name: 'Select Profile Photo', size: 1.8, fontWeightName: FontWeight.w600),
-            const SizedBox(height: 20),
+            CustText(name: AppStrings.selectProfilePhoto, size: 1.8, fontWeightName: FontWeight.w600),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.sectionSpacing)),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildPickerOption(Icons.visibility, 'View Photo', null),
-                _buildPickerOption(Icons.camera_alt, 'Camera', ImageSource.camera),
-                _buildPickerOption(Icons.photo_library, 'Gallery', ImageSource.gallery),
+                _buildPickerOption(context, Icons.visibility, AppStrings.viewPhoto, null),
+                _buildPickerOption(context, Icons.camera_alt, AppStrings.camera, ImageSource.camera),
+                _buildPickerOption(context, Icons.photo_library, AppStrings.gallery, ImageSource.gallery),
               ],
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.sectionSpacing)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildPickerOption(IconData icon, String label, ImageSource? source) {
+  Widget _buildPickerOption(BuildContext context, IconData icon, String label, ImageSource? source) {
     return InkWell(
       onTap: () {
         Get.back();
         if (source == null) {
-          final imageFile = controller.selectedImage.value;
-          final profilePicUrl = controller.profileData.value?.profilePic;
+          final imageFile = controller.profileController.selectedImage.value;
+          final profilePicUrl = controller.profileController.profileData.value?.profilePic;
           final provider = imageFile != null
               ? FileImage(imageFile)
               : (profilePicUrl != null && profilePicUrl.isNotEmpty
@@ -478,20 +177,20 @@ class _EditProfileViewState extends State<EditProfileView> with SingleTickerProv
                   : const AssetImage('assets/images/drawer/profile_pic.png')) as ImageProvider;
           FullImageViewer.show(context, imageProvider: provider, heroTag: 'profile_pic_edit');
         } else {
-          controller.pickAndCropImage(source);
+          controller.profileController.pickAndCropImage(source);
         }
       },
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(15),
+            padding: EdgeInsets.all(ResponsiveHelper.spacing(context, AppConstants.cardPadding)),
             decoration: BoxDecoration(
               color: AppColors.blue.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: AppColors.blue, size: 30),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: ResponsiveHelper.spacing(context, 8)),
           CustText(name: label, size: 1.4),
         ],
       ),
@@ -504,7 +203,7 @@ class _EditProfileViewState extends State<EditProfileView> with SingleTickerProv
         border: Border(bottom: BorderSide(color: AppColors.dividerColor2, width: 1)),
       ),
       child: TabBar(
-        controller: _tabController,
+        controller: controller.tabController,
         labelColor: AppColors.blue,
         isScrollable: true,
         tabAlignment: TabAlignment.start,
@@ -513,76 +212,72 @@ class _EditProfileViewState extends State<EditProfileView> with SingleTickerProv
         indicatorSize: TabBarIndicatorSize.tab,
         labelStyle: GoogleFonts.outfit(fontWeight: FontWeight.w600, fontSize: 16),
         unselectedLabelStyle: GoogleFonts.outfit(fontWeight: FontWeight.w400, fontSize: 16),
-        onTap: (index) => _scrollToSection(index),
+        onTap: (index) => controller.scrollToSection(index),
         tabs: const [
-          Tab(text: 'Personal Details'),
-          Tab(text: 'Employee Details'),
-          Tab(text: 'Finance Details'),
+          Tab(text: AppStrings.personalDetails),
+          Tab(text: AppStrings.employeeDetails),
+          Tab(text: AppStrings.financeDetails),
         ],
       ),
     );
   }
 
-  Widget _buildPersonalDetailsSection() {
+  Widget _buildPersonalDetailsSection(BuildContext context) {
     return Container(
-      key: _personalKey,
+      key: controller.personalKey,
       child: AccordionCard(
-        title: 'Personal Details',
-        isExpanded: true,
-        expanded: true,
-        onTap: () {},
+        title: AppStrings.personalDetails,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const CustText(name: 'Personal Details', size: 1.6, fontWeightName: FontWeight.w600),
-            const SizedBox(height: 16),
+            CustText.sectionHeader(AppStrings.personalDetails),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
             Row(
               children: [
-                Expanded(child: CustomTextField(controller: firstNameController, label: 'First Name', hintText: 'First Name', textCapitalization: TextCapitalization.words)),
-                const SizedBox(width: 12),
-                Expanded(child: CustomTextField(controller: lastNameController, label: 'Last Name', hintText: 'Last Name', textCapitalization: TextCapitalization.words)),
+                Expanded(child: CustomTextField(controller: controller.firstNameController, label: AppStrings.firstName, hintText: AppStrings.firstName, textCapitalization: TextCapitalization.words)),
+                SizedBox(width: ResponsiveHelper.width(context, AppConstants.elementSpacing)),
+                Expanded(child: CustomTextField(controller: controller.lastNameController, label: AppStrings.lastName, hintText: AppStrings.lastName, textCapitalization: TextCapitalization.words)),
               ],
             ),
-            const SizedBox(height: 16),
-            CustomTextField(controller: empNoController, label: 'Employee Number', hintText: 'Enter Employee Number',keyboardType: TextInputType.number,),
-            const SizedBox(height: 16),
-            CustomTextField(controller: contactNoController, label: 'Contact Number', hintText: 'Enter Contact Number', keyboardType: TextInputType.phone, maxLength: 10,),
-            const SizedBox(height: 16),
-            CustomTextField(controller: altContactNoController, label: 'Alternate Contact Number', hintText: 'Enter Alternate Contact Number', keyboardType: TextInputType.phone, maxLength: 10),
-            const SizedBox(height: 16),
-            CustomTextField(controller: emailController, label: 'Email', hintText: 'Enter Email', keyboardType: TextInputType.emailAddress),
-            const SizedBox(height: 16),
-            _buildGenderSelection(),
-            const SizedBox(height: 16),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+            CustomTextField(controller: controller.empNoController, label: AppStrings.employeeNumber, hintText: AppStrings.enterEmployeeNumber,keyboardType: TextInputType.number,),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+            CustomTextField(controller: controller.contactNoController, label: AppStrings.contactNumber, hintText: AppStrings.enterContactNumber, keyboardType: TextInputType.phone, maxLength: 10,),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+            CustomTextField(controller: controller.altContactNoController, label: AppStrings.altContactNumber, hintText: AppStrings.enterAltContactNumber, keyboardType: TextInputType.phone, maxLength: 10),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+            CustomTextField(controller: controller.emailController, label: AppStrings.email, hintText: AppStrings.enterEmail, keyboardType: TextInputType.emailAddress),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+            _buildGenderSelection(context),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
             CustDateTimePicker(
-              label: 'Date of Birth',
-              hint: 'DD/MM/YYYY',
-              selectedDateTime: dobController.text.isEmpty ? null : AppDateUtils.parseDate(dobController.text),
+              label: AppStrings.dateOfBirth,
+              hint: AppStrings.dateFormat,
+              selectedDateTime: controller.dobController.text.isEmpty ? null : AppDateUtils.parseDate(controller.dobController.text),
               pickerType: CustDateTimePickerType.date,
               onDateTimeSelected: (date) {
                 if (date != null) {
-                  setState(() => dobController.text = AppDateUtils.formatDate(date));
+                  controller.dobController.text = AppDateUtils.formatDate(date);
                 }
               },
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: ResponsiveHelper.spacing(context, 16)),
             CustDropdown(
-              label: 'Blood Group', 
-              hint: 'Select Blood Group', 
+              label: AppStrings.bloodGroup, 
+              hint: AppStrings.selectBloodGroup, 
               items: const ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
-              selectedValue: bloodGroupController.text.isEmpty ? null : bloodGroupController.text,
-              onChanged: (v) => setState(() => bloodGroupController.text = v ?? ''),
+              selectedValue: controller.bloodGroupController.text.isEmpty ? null : controller.bloodGroupController.text,
+              onChanged: (v) => controller.bloodGroupController.text = v ?? '',
             ),
-            const SizedBox(height: 16),
-            CustomTextField(controller: birthPlaceController, label: 'Birth Place', hintText: 'Enter Birth Place', textCapitalization: TextCapitalization.words),
-            
-            const SizedBox(height: 24),
-            const CustText(name: 'Verification Details', size: 1.6, fontWeightName: FontWeight.w600),
-            const SizedBox(height: 16),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+            CustomTextField(controller: controller.birthPlaceController, label: AppStrings.birthPlace, hintText: AppStrings.enterBirthPlace, textCapitalization: TextCapitalization.words),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.sectionSpacing)),
+            CustText.sectionHeader(AppStrings.verificationDetails),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
             CustomTextField(
-              controller: panCardController, 
-              label: 'Pan Card No.', 
-              hintText: 'Enter Pan Card No.', 
+              controller: controller.panCardController, 
+              label: AppStrings.panCardNo, 
+              hintText: AppStrings.enterPanCardNo, 
               textCapitalization: TextCapitalization.characters,
               inputFormatters: [
                 TextInputFormatter.withFunction((oldValue, newValue) {
@@ -590,154 +285,137 @@ class _EditProfileViewState extends State<EditProfileView> with SingleTickerProv
                 }),
               ],
             ),
-            const SizedBox(height: 16),
-            CustomTextField(controller: aadharCardController, label: 'Aadhar Card No.', hintText: 'Enter Aadhar Card No.',keyboardType: TextInputType.number,maxLength: 12,),
-
-            const SizedBox(height: 24),
-            const CustText(name: 'Current Address', size: 1.6, fontWeightName: FontWeight.w600),
-            const SizedBox(height: 16),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+            CustomTextField(controller: controller.aadharCardController, label: AppStrings.aadharCardNo, hintText: AppStrings.enterAadharCardNo,keyboardType: TextInputType.number,maxLength: 12,),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.sectionSpacing)),
+            CustText.sectionHeader(AppStrings.currentAddress),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
             _buildAddressFields(
-              resHouseNoController, localityController, pincodeController, 
-              cityController, stateController, countryController
+              context,
+              controller.resHouseNoController, controller.localityController, controller.pincodeController, 
+              controller.cityController, controller.stateController, controller.countryController
             ),
 
-            const SizedBox(height: 24),
-            const CustText(name: 'Permanent Address', size: 1.6, fontWeightName: FontWeight.w600),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.sectionSpacing)),
+            CustText.sectionHeader(AppStrings.permanentAddress),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Checkbox(
-                  value: sameAsCurrent,
+                Obx(() => Checkbox(
+                  value: controller.sameAsCurrent.value,
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
-                  onChanged: (val) {
-                    setState(() {
-                      sameAsCurrent = val ?? false;
-                      if (sameAsCurrent) {
-                        pResHouseNoController.text = resHouseNoController.text;
-                        pLocalityController.text = localityController.text;
-                        pPincodeController.text = pincodeController.text;
-                        pCityController.text = cityController.text;
-                        pStateController.text = stateController.text;
-                        pCountryController.text = countryController.text;
-                      }
-                    });
-                  },
+                  onChanged: (val) => controller.toggleSameAsCurrent(val),
                   activeColor: AppColors.blue,
-                ),
-                const SizedBox(width: 8),
-
-                const CustText(name: 'Same as Current Address', size: 1.2, color: AppColors.textColor4),
+                )),
+                SizedBox(width: ResponsiveHelper.width(context, 8)),
+                CustText(name: AppStrings.sameAsCurrentAddress, size: 1.2, color: AppColors.textColor4),
               ],
             ),
-            _buildAddressFields(
-              pResHouseNoController, pLocalityController, pPincodeController, 
-              pCityController, pStateController, pCountryController,
-              enabled: !sameAsCurrent
-            ),
+            Obx(() => _buildAddressFields(
+              context,
+              controller.pResHouseNoController, controller.pLocalityController, controller.pPincodeController, 
+              controller.pCityController, controller.pStateController, controller.pCountryController,
+              enabled: !controller.sameAsCurrent.value
+            )),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildEmployeeDetailsSection() {
+  Widget _buildEmployeeDetailsSection(BuildContext context) {
     return Container(
-      key: _employeeKey,
+      key: controller.employeeKey,
       child: AccordionCard(
-        title: 'Employee Details',
-        isExpanded: true,
-        expanded: true,
-        onTap: () {},
+        title: AppStrings.employeeDetails,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const CustText(name: 'Employee Details', size: 1.6, fontWeightName: FontWeight.w600),
-            const SizedBox(height: 16),
+            CustText.sectionHeader(AppStrings.employeeDetails),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
             CustDateTimePicker(
-              label: 'Date of Joining',
-              hint: 'DD/MM/YYYY',
-              selectedDateTime: dojController.text.isEmpty ? null : AppDateUtils.parseDate(dojController.text),
+              label: AppStrings.dateOfJoining,
+              hint: AppStrings.dateFormat,
+              selectedDateTime: controller.dojController.text.isEmpty ? null : AppDateUtils.parseDate(controller.dojController.text),
               pickerType: CustDateTimePickerType.date,
               onDateTimeSelected: (date) {
                 if (date != null) {
-                  setState(() => dojController.text = AppDateUtils.formatDate(date));
+                  controller.dojController.text = AppDateUtils.formatDate(date);
                 }
               },
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
             Obx(() => CustDropdown(
-              label: 'City', 
-              hint: 'Select City', 
-              items: controller.cities.map((e) => e.name).toList(), 
-              selectedValue: empCityController.text.isEmpty ? null : empCityController.text,
-              onChanged: (v) => setState(() => empCityController.text = v ?? ''),
+              label: AppStrings.city, 
+              hint: AppStrings.selectCity, 
+              items: controller.profileController.cities.map((e) => e.name.toTitle()).toList(), 
+              selectedValue: controller.empCityController.text.isEmpty ? null : controller.empCityController.text,
+              onChanged: (v) => controller.empCityController.text = v ?? '',
             )),
-            const SizedBox(height: 16),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
             Obx(() => CustDropdown(
-              label: 'Department', 
-              hint: 'Select Department', 
-              items: controller.departmentTypes.map((e) => e.name).toList(), 
-              selectedValue: deptController.text.isEmpty ? null : deptController.text,
-              onChanged: (v) => setState(() => deptController.text = v ?? ''),
+              label: AppStrings.department, 
+              hint: AppStrings.selectDepartment, 
+              items: controller.profileController.departmentTypes.map((e) => e.name.toTitle()).toList(), 
+              selectedValue: controller.deptController.text.isEmpty ? null : controller.deptController.text,
+              onChanged: (v) => controller.deptController.text = v ?? '',
             )),
-            const SizedBox(height: 16),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
             Obx(() {
-              final stationController = Get.find<StationController>();
-              final items = stationController.stations.map((s) => s.name).toList();
+              final stationControllerLayer = Get.find<StationController>();
+              final items = stationControllerLayer.stations.map((s) => s.name.toTitle()).toList();
               return CustDropdown(
-                label: 'Station',
-                hint: 'Enter Station',
-                items: items.isEmpty ? stationListValue : items,
-                selectedValue: _selectedStation,
-                validator: (value) => value == null || value.isEmpty ? 'Please Select Station' : null,
-                onChanged: (value) => setState(() => _selectedStation = value),
+                label: AppStrings.station,
+                hint: AppStrings.enterStation,
+                items: items.isEmpty ? controller.stationListValue.map((e) => e.toTitle()).toList() : items,
+                selectedValue: controller.selectedStation.value!.isNotEmpty ? controller.selectedStation.value : null,
+                validator: (value) => value == null || value.isEmpty ? AppStrings.pleaseSelectStation : null,
+                onChanged: (value) => controller.selectedStation.value = value,
               );
             }),
-            const SizedBox(height: 16),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
             Obx(() => CustDropdown(
-              label: 'Role', 
-              hint: 'Select Role', 
-              items: controller.roles.map((e) => e.name).toList(), 
-              selectedValue: roleController.text.isEmpty ? null : roleController.text,
-              onChanged: (v) => setState(() => roleController.text = v ?? ''),
+              label: AppStrings.role, 
+              hint: AppStrings.selectRole, 
+              items: controller.profileController.roles.map((e) => e.name.toTitle()).toList(), 
+              selectedValue: controller.roleController.text.isEmpty ? null : controller.roleController.text,
+              onChanged: (v) => controller.roleController.text = v ?? '',
             )),
-            const SizedBox(height: 16),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
             Obx(() => CustDropdown(
-              label: 'Designation', 
-              hint: 'Select Designation', 
-              items: controller.designations.map((e) => e.name).toList(), 
-              selectedValue: designationController.text.isEmpty ? null : designationController.text,
-              onChanged: (v) => setState(() => designationController.text = v ?? ''),
+              label: AppStrings.designation, 
+              hint: AppStrings.selectDesignation, 
+              items: controller.profileController.designations.map((e) => e.name.toTitle()).toList(), 
+              selectedValue: controller.designationController.text.isEmpty ? null : controller.designationController.text,
+              onChanged: (v) => controller.designationController.text = v ?? '',
             )),
-            const SizedBox(height: 16),
-            _buildShiftSelection(),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+            _buildShiftSelection(context),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildFinanceDetailsSection() {
+  Widget _buildFinanceDetailsSection(BuildContext context) {
     return Container(
-      key: _financeKey,
+      key: controller.financeKey,
       child: AccordionCard(
-        title: 'Finance Details',
-        isExpanded: true,
-        expanded: true,
-        onTap: () {},
+        title: AppStrings.financeDetails,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const CustText(name: 'Finance Details', size: 1.6, fontWeightName: FontWeight.w600),
-            const SizedBox(height: 16),
-            CustomTextField(controller: bankNameController, label: 'Bank Name', hintText: 'Enter Bank Name', textCapitalization: TextCapitalization.words),
-            const SizedBox(height: 16),
-            CustomTextField(controller: accountNoController, label: 'Account Number', hintText: 'Enter Account Number', keyboardType: TextInputType.number),
-            const SizedBox(height: 16),
-            CustomTextField(controller: ifscController, label: 'IFSC Code', hintText: 'Enter IFSC Code', textCapitalization: TextCapitalization.characters),
-            const SizedBox(height: 16),
-            CustomTextField(controller: branchController, label: 'Branch Name', hintText: 'Enter Branch Name', textCapitalization: TextCapitalization.words),
+            CustText.sectionHeader(AppStrings.financeDetails),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+            CustomTextField(controller: controller.bankNameController, label: AppStrings.bankName, hintText: AppStrings.enterBankName, textCapitalization: TextCapitalization.words),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+            CustomTextField(controller: controller.accountNoController, label: AppStrings.accountNumber, hintText: AppStrings.enterAccountNumber, keyboardType: TextInputType.number),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+            CustomTextField(controller: controller.ifscController, label: AppStrings.ifscCode, hintText: AppStrings.enterIfscCode, textCapitalization: TextCapitalization.characters),
+            SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+            CustomTextField(controller: controller.branchController, label: AppStrings.branchName, hintText: AppStrings.enterBranchName, textCapitalization: TextCapitalization.words),
           ],
         ),
       ),
@@ -745,116 +423,119 @@ class _EditProfileViewState extends State<EditProfileView> with SingleTickerProv
   }
 
   Widget _buildAddressFields(
-    TextEditingController house, TextEditingController locality, TextEditingController pin,
+    BuildContext context, TextEditingController house, TextEditingController locality, TextEditingController pin,
     TextEditingController city, TextEditingController state, TextEditingController country,
     {bool enabled = true}
   ) {
-    country = TextEditingController(text: 'India');
+    if (country.text.isEmpty) country.text = 'India';
     return Column(
       children: [
-        CustomTextField(controller: house, label: 'Residency / House No.', hintText: 'House No / Residency', enabled: enabled, textCapitalization: TextCapitalization.words),
-        const SizedBox(height: 16),
-        CustomTextField(controller: locality, label: 'Locality / Town / Village', hintText: 'Locality / Town / Village', enabled: enabled, textCapitalization: TextCapitalization.words),
-        const SizedBox(height: 16),
-        CustomTextField(controller: pin, label: 'Pincode', hintText: 'Enter Pincode', keyboardType: TextInputType.number, enabled: enabled, maxLength: 6,),
-        const SizedBox(height: 16),
-        CustomTextField(controller: city, label: 'City', hintText: 'Enter City', enabled: enabled, textCapitalization: TextCapitalization.words),
-        const SizedBox(height: 16),
-        CustomTextField(controller: state, label: 'State', hintText: 'Enter State', enabled: enabled, textCapitalization: TextCapitalization.words),
-        const SizedBox(height: 16),
-        CustomTextField(controller: country, label: 'Country', hintText: 'Enter Country', enabled: enabled, textCapitalization: TextCapitalization.words),
+        CustomTextField(controller: house, label: AppStrings.resHouseNo, hintText: AppStrings.hintResHouseNo, enabled: enabled, textCapitalization: TextCapitalization.words),
+        SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+        CustomTextField(controller: locality, label: AppStrings.localityTownVillage, hintText: AppStrings.localityTownVillage, enabled: enabled, textCapitalization: TextCapitalization.words),
+        SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+        CustomTextField(controller: pin, label: AppStrings.pincode, hintText: AppStrings.enterPincode, keyboardType: TextInputType.number, enabled: enabled, maxLength: 6,),
+        SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+        CustomTextField(controller: city, label: AppStrings.city, hintText: AppStrings.enterCity, enabled: enabled, textCapitalization: TextCapitalization.words),
+        SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+        CustomTextField(controller: state, label: AppStrings.state, hintText: AppStrings.enterState, enabled: enabled, textCapitalization: TextCapitalization.words),
+        SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
+        CustomTextField(controller: country, label: AppStrings.country, hintText: AppStrings.enterCountry, enabled: enabled, textCapitalization: TextCapitalization.words),
       ],
     );
   }
 
-  Widget _buildGenderSelection() {
+  Widget _buildGenderSelection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const CustText(name: 'Gender', size: 1.4, fontWeightName: FontWeight.w500, color: AppColors.textColor4),
-        const SizedBox(height: 8),
+        CustText.formLabel(AppStrings.gender),
+        SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.labelSpacing)),
         Row(
           children: [
-            _genderButton('Male', "assets/images/man.png"),
-            const SizedBox(width: 8),
-            _genderButton('Female',"assets/images/woman.png"),
-            const SizedBox(width: 8),
-            _genderButton('Others', "assets/images/star.png"),
+            _genderButton(context, AppStrings.male, "assets/images/man.png"),
+            SizedBox(width: ResponsiveHelper.width(context, 8)),
+            _genderButton(context, AppStrings.female,"assets/images/woman.png"),
+            SizedBox(width: ResponsiveHelper.width(context, 8)),
+            _genderButton(context, AppStrings.others, "assets/images/star.png"),
           ],
         ),
       ],
     );
   }
 
-  Widget _genderButton(String label, String image) {
-    bool isSelected = selectedGender == label;
+  Widget _genderButton(BuildContext context, String label, String image) {
     return Expanded(
-      child: InkWell(
-        onTap: () => setState(() => selectedGender = label),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          decoration: BoxDecoration(
-            color: isSelected ? AppColors.blue.withOpacity(0.1) : Colors.white,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: isSelected ? AppColors.blue : AppColors.dividerColor2),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(image, height: 20, width: 20),
-              const SizedBox(width: 8),
-              CustText(name: label, size: 1.2, fontWeightName: FontWeight.w500, color: isSelected ? AppColors.blue : AppColors.textColor4),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildShiftSelection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const CustText(name: 'Duty Shift', size: 1.4, fontWeightName: FontWeight.w500, color: AppColors.textColor4),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            _shiftButton('Morning'),
-            const SizedBox(width: 4),
-            _shiftButton('Evening'),
-            const SizedBox(width: 4),
-            _shiftButton('Night'),
-            const SizedBox(width: 4),
-            _shiftButton('General'),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _shiftButton(String label) {
-    bool isSelected = selectedShift == label;
-    return Expanded(
-      child: InkWell(
-        onTap: () => setState(() => selectedShift = label),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          decoration: BoxDecoration(
-            color: isSelected ? AppColors.blue.withOpacity(0.1) : Colors.white,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: isSelected ? AppColors.blue : AppColors.dividerColor2),
-          ),
-          child: Center(
-            child: CustText(
-              name: label, 
-              size: 1.1, 
-              color: isSelected ? AppColors.blue : AppColors.textColor4,
-              fontWeightName: isSelected ? FontWeight.w600 : FontWeight.w400,
+      child: Obx(() {
+        bool isSelected = controller.selectedGender.value == label;
+        return InkWell(
+          onTap: () => controller.selectedGender.value = label,
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: ResponsiveHelper.spacing(context, 10)),
+            decoration: BoxDecoration(
+              color: isSelected ? AppColors.blue.withOpacity(0.1) : Colors.white,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: isSelected ? AppColors.blue : AppColors.dividerColor2),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(image, height: ResponsiveHelper.height(context, 20), width: ResponsiveHelper.width(context, 20)),
+                SizedBox(width: ResponsiveHelper.width(context, 8)),
+                CustText.formLabel(label,color:  isSelected ? AppColors.blue : AppColors.textColor4)
+              ],
             ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 
+  Widget _buildShiftSelection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CustText(name: AppStrings.dutyShift, size: 1.4, fontWeightName: FontWeight.w500, color: AppColors.textColor4),
+        SizedBox(height: ResponsiveHelper.spacing(context, 8)),
+        Row(
+          children: [
+            _shiftButton(context, AppStrings.morning),
+            SizedBox(width: ResponsiveHelper.width(context, 4)),
+            _shiftButton(context, AppStrings.evening),
+            SizedBox(width: ResponsiveHelper.width(context, 4)),
+            _shiftButton(context, AppStrings.night),
+            SizedBox(width: ResponsiveHelper.width(context, 4)),
+            _shiftButton(context, AppStrings.general),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _shiftButton(BuildContext context, String label) {
+    return Expanded(
+      child: Obx(() {
+        bool isSelected = controller.selectedShift.value == label;
+        return InkWell(
+          onTap: () => controller.selectedShift.value = label,
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: ResponsiveHelper.spacing(context, 10)),
+            decoration: BoxDecoration(
+              color: isSelected ? AppColors.blue.withOpacity(0.1) : AppColors.white1,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: isSelected ? AppColors.blue : AppColors.dividerColor2),
+            ),
+            child: Center(
+              child: CustText(
+                name: label, 
+                size: 1.1, 
+                color: isSelected ? AppColors.blue : AppColors.textColor4,
+                fontWeightName: isSelected ? FontWeight.w600 : FontWeight.w400,
+              ),
+            ),
+          ),
+        );
+      }),
+    );
+  }
 }

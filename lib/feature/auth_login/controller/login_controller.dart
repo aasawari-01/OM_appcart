@@ -19,35 +19,25 @@ class LoginController extends GetxController {
     required String email,
     required String password,
   }) async {
-    // Validation is now handled in the View via Form and validators.
-
     try {
       isLoading.value = true;
-
-      // Get FCM token from NotificationService
       print("Fetching FCM token...");
       final String? fcmToken = await Get.find<NotificationService>().getFcmToken();
       print("fcmToken==+$fcmToken");
-      
-      print("Calling login API...");
       final LoginResponse result =
           await _authService.login(email: email, password: password, deviceToken: fcmToken);
 
       if (result.status && result.data != null) {
-        // Persist tokens/user info using AuthManager
         await AuthManager().login(
           userId: result.data!.id?.toString() ?? '',
           token: result.data!.accessToken ?? '',
           roleId: result.data!.role?.id,
         );
-
-        // Refresh profile data for the new user
         if (Get.isRegistered<UserProfileController>()) {
           final userProfileController = Get.find<UserProfileController>();
           userProfileController.fetchProfileData();
           userProfileController.fetchMasterData();
         }
-
         Get.offAll(() => TabScreen(index: 0));
       } else {
         CustomSnackBar.show(

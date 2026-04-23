@@ -63,9 +63,6 @@ class _AxleCounterResetFormState extends State<AxleCounterResetForm> {
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                 child: AccordionCard(
-                  expanded: true,
-                  onTap: () {},
-                  isExpanded: false,
                   title: "Axle Counter Reset Details",
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

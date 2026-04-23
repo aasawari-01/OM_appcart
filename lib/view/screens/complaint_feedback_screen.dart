@@ -252,10 +252,7 @@ class _ComplaintFeedbackScreenState extends State<ComplaintFeedbackScreen> with 
     return SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                             child:AccordionCard(
-                              isExpanded: false,
-                              expanded: true,
                               title: _stepTitles[_currentStep],
-                              onTap: () {},
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -335,10 +332,7 @@ class _ComplaintFeedbackScreenState extends State<ComplaintFeedbackScreen> with 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                             child: AccordionCard(
-                              isExpanded: false,
-                              expanded: true,
                               title: _stepTitles[_currentStep],
-                              onTap: () {},
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -395,10 +389,7 @@ class _ComplaintFeedbackScreenState extends State<ComplaintFeedbackScreen> with 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                             child:AccordionCard(
-                              isExpanded: false,
-                              expanded: true,
                               title: _stepTitles[_currentStep],
-                              onTap: () {},
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -442,10 +433,7 @@ class _ComplaintFeedbackScreenState extends State<ComplaintFeedbackScreen> with 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child:AccordionCard(
-        isExpanded: false,
-        expanded: true,
         title: _stepTitles[_currentStep],
-        onTap: () {},
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

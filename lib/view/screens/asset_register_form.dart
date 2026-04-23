@@ -85,9 +85,6 @@ class _AssetRegisterFormState extends State<AssetRegisterForm> {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: AccordionCard(
-        expanded: true,
-        onTap: () {},
-        isExpanded: false,
         title: "Asset Details",
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

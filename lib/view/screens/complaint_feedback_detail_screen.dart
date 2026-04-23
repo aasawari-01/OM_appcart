@@ -178,14 +178,7 @@ class _ComplaintFeedbackDetailScreenState extends State<ComplaintFeedbackDetailS
                   SizedBox(height: ResponsiveHelper.spacing(context, 8)),
                   // Complaint Details Accordion
                   AccordionCard(
-                    isExpanded: true,
                     title: 'Complaint Details',
-                    expanded: complaintDetailsExpanded,
-                    onTap: () {
-                      setState(() {
-                        complaintDetailsExpanded = !complaintDetailsExpanded;
-                      });
-                    },
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -242,14 +235,7 @@ class _ComplaintFeedbackDetailScreenState extends State<ComplaintFeedbackDetailS
                   SizedBox(height: 12),
                   // Complainant Details Accordion
                   AccordionCard(
-                    isExpanded: true,
                     title: 'Complainant Details',
-                    expanded: complainantDetailsExpanded,
-                    onTap: () {
-                      setState(() {
-                        complainantDetailsExpanded = !complainantDetailsExpanded;
-                      });
-                    },
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -329,14 +315,7 @@ class _ComplaintFeedbackDetailScreenState extends State<ComplaintFeedbackDetailS
                   SizedBox(height: 12),
                   // Remark Accordion
                   AccordionCard(
-                    isExpanded: true,
                     title: 'Remark',
-                    expanded: remarkExpanded,
-                    onTap: () {
-                      setState(() {
-                        remarkExpanded = !remarkExpanded;
-                      });
-                    },
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -388,14 +367,7 @@ class _ComplaintFeedbackDetailScreenState extends State<ComplaintFeedbackDetailS
                   SizedBox(height: 12),
                   // Attachments Accordion
                   AccordionCard(
-                    isExpanded: true,
                     title: 'Attachments',
-                    expanded: attachmentsExpanded,
-                    onTap: () {
-                      setState(() {
-                        attachmentsExpanded = !attachmentsExpanded;
-                      });
-                    },
                     child: attachments.isEmpty
                       ? CustText(name: 'No attachments', size: 1.4, color: AppColors.textColor4)
                       : Column(

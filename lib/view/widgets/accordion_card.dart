@@ -5,18 +5,14 @@ import 'cust_text.dart';
 
 class AccordionCard extends StatelessWidget {
   final String title;
-  final bool? expanded;
-  final bool isExpanded;
-  final VoidCallback onTap;
   final Widget? child;
+  final Widget? headerTrailing;
 
   const AccordionCard({
     Key? key,
     required this.title,
-     this.expanded,
-    required this.isExpanded,
-    required this.onTap,
     this.child,
+    this.headerTrailing,
   }) : super(key: key);
 
   @override
@@ -36,10 +32,7 @@ class AccordionCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          isExpanded
-              ? GestureDetector(
-                  onTap: onTap,
-                  child: Container(
+                Container(
                     color: Colors.transparent,
                     padding: const EdgeInsets.symmetric(horizontal: 0),
                     child: Row(
@@ -62,37 +55,50 @@ class AccordionCard extends StatelessWidget {
                             fontWeightName: FontWeight.w500,
                           ),
                         ),
+                        if (headerTrailing != null) ...[
+                          const Spacer(),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 15,top: 15,),
+                            child: headerTrailing!,
+                          ),
+                        ],
                       ],
                     ),
                   ),
-                )
-              : Container(
-                  color: Colors.transparent,
-                  padding: const EdgeInsets.symmetric(horizontal: 0),
-                  child: Row(
-                    children: [
-                      title==''?SizedBox.shrink():
-                      Container(
-                        margin: const EdgeInsets.only(left: 15, bottom: 10),
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.blue.shade50.withOpacity(0.5),
-                          borderRadius: const BorderRadius.only(
-                            bottomRight: Radius.circular(20),
-                            bottomLeft: Radius.circular(20),
-                          ),
-                        ),
-                        child: CustText(
-                          name: title,
-                          size: 2.0,
-                          color: AppColors.textColor3,
-                          fontWeightName: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-          if (child != null && (expanded ?? false))
+              // : Container(
+              //     color: Colors.transparent,
+              //     padding: const EdgeInsets.symmetric(horizontal: 0),
+              //     child: Row(
+              //       children: [
+              //         title==''?SizedBox.shrink():
+              //         Container(
+              //           margin: const EdgeInsets.only(left: 15, bottom: 10),
+              //           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              //           decoration: BoxDecoration(
+              //             color: Colors.blue.shade50.withOpacity(0.5),
+              //             borderRadius: const BorderRadius.only(
+              //               bottomRight: Radius.circular(20),
+              //               bottomLeft: Radius.circular(20),
+              //             ),
+              //           ),
+              //           child: CustText(
+              //             name: title,
+              //             size: 2.0,
+              //             color: AppColors.textColor3,
+              //             fontWeightName: FontWeight.w500,
+              //           ),
+              //         ),
+              //         if (headerTrailing != null) ...[
+              //           const Spacer(),
+              //           Padding(
+              //             padding: const EdgeInsets.only(right: 15),
+              //             child: headerTrailing!,
+              //           ),
+              //         ],
+              //       ],
+              //     ),
+              //   ),
+          if (child != null)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               child: Align(

@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import '../service/station_service.dart';
-import '../feature/lost&found/model/lost_found_table_record.dart';
+import '../../lost_and_found/model/lost_found_table_record.dart';
 
 class StationController extends GetxController {
   final StationService _service = StationService();

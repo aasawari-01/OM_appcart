@@ -13,8 +13,8 @@ import 'view/screens/onboarding_view.dart';
 import 'service/auth_manager.dart';
 import 'view/screens/tab_screen.dart';
 import 'service/quick_actions_overlay.dart';
-import 'feature/lost&found/view/finalize_found_lost_items_screen.dart';
-import 'controller/station_controller.dart';
+import 'feature/lost_and_found/view/finalize_found_lost_items_screen.dart';
+import 'feature/failure/controller/station_controller.dart';
 import 'view/screens/notification_screen.dart';
 import 'service/notification_service.dart';
 import 'feature/user_profile/controller/user_profile_controller.dart';
@@ -28,13 +28,9 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
-  
   await Firebase.initializeApp();
-  
   await Get.putAsync(() => NotificationService().init());
-  
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
   Get.put(StationController(), permanent: true);
   Get.put(UserProfileController(), permanent: true);
   final bool isLoggedIn = await AuthManager().isLoggedIn();

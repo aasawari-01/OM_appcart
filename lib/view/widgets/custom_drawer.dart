@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../constants/colors.dart';
-import '../../feature/lost&found/view/lost_and_found_list_screen.dart';
+import '../../feature/lost_and_found/view/lost_and_found_list_screen.dart';
 import '../../feature/user_profile/view/profile_view.dart';
 import '../../utils/responsive_helper.dart';
 import '../screens/home_screen.dart';
@@ -142,7 +142,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             isSubSection: true,
             children: [
               MenuItem(title: 'Complaint & Feedback Register', key: 'crm_complaint_feedback', screen: ComplaintFeedbackListScreen()),
-              MenuItem(title: 'Lost And Found', key: 'lost&found', screen: LostAndFoundListScreen()),
+              MenuItem(title: 'Lost And Found', key: 'lost_and_found', screen: LostAndFoundListScreen()),
             ],
           ),
         ],
@@ -322,7 +322,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               CustText(
-                                name: "${(user?.firstName ?? 'User').capitalizeFirstLetter()} ${user?.lastName ?? ''}".trim(),
+                                name: "${(user?.firstName ?? 'User').capitalizefirst()} ${user?.lastName ?? ''}".trim(),
                                 size: 1.8,
                                 fontWeightName: FontWeight.w700,
                                 color: AppColors.textColor,

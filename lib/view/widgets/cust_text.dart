@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../constants/colors.dart';
+import '../../constants/app_constants.dart';
 import '../../utils/responsive_helper.dart';
 
 class CustText extends StatelessWidget {
@@ -23,6 +24,51 @@ class CustText extends StatelessWidget {
     this.maxLines,
     this.overflow,
   });
+
+  /// Standard Section Header (e.g. "Personal Details")
+  static CustText sectionHeader(String name, {Color? color, TextAlign? textAlign}) {
+    return CustText(
+      name: name,
+      size: AppConstants.sectionHeaderSize,
+      fontWeightName: FontWeight.w600,
+      color: color ?? AppColors.gradientEnd,
+      textAlign: textAlign,
+    );
+  }
+
+  /// Standard Form/Input Label (e.g. "First Name")
+  static CustText formLabel(String name, {Color? color, TextAlign? textAlign}) {
+    return CustText(
+      name: name,
+      size: AppConstants.formLabelSize,
+      fontWeightName: FontWeight.w500,
+      color: color ?? AppColors.textColor,
+      textAlign: textAlign,
+    );
+  }
+
+  /// Standard Detail View Label (e.g. "Station:")
+  static CustText detailLabel(String name, {Color? color, TextAlign? textAlign}) {
+    return CustText(
+      name: name,
+      size: AppConstants.detailLabelSize,
+      fontWeightName: FontWeight.w400,
+      color: color ?? AppColors.textColor4,
+      textAlign: textAlign,
+    );
+  }
+
+  /// Standard Detail View Value (e.g. "Mumbai")
+  static CustText detailValue(String name, {Color? color, TextAlign? textAlign, TextOverflow? overflow}) {
+    return CustText(
+      name: name,
+      size: AppConstants.detailValueSize,
+      fontWeightName: FontWeight.bold,
+      color: color ?? AppColors.black,
+      textAlign: textAlign,
+      overflow: overflow,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

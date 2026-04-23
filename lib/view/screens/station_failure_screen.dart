@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:get/get.dart';
-import 'package:om_appcart/controller/station_controller.dart';
+import 'package:om_appcart/feature/failure/controller/station_controller.dart';
 import 'package:om_appcart/constants/colors.dart';
 
 import '../../constants/app_data.dart';
@@ -247,10 +247,7 @@ class _StationFailureScreenState extends State<StationFailureScreen> with Single
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                             child: AccordionCard(
-                              isExpanded: false,
-                              expanded: true,
                               title: _stepTitles[_currentStep],
-                              onTap: () {},
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -375,10 +372,7 @@ class _StationFailureScreenState extends State<StationFailureScreen> with Single
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                       child:AccordionCard(
-                        isExpanded: false,
-                        expanded: true,
                         title: _stepTitles[_currentStep],
-                        onTap: () {},
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -567,10 +561,7 @@ class _StationFailureScreenState extends State<StationFailureScreen> with Single
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: AccordionCard(
-        isExpanded: false,
-        expanded: true,
         title: _stepTitles[_currentStep],
-        onTap: () {},
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
