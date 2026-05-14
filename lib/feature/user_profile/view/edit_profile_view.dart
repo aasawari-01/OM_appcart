@@ -482,7 +482,7 @@ class EditProfileView extends GetView<EditProfileController> {
               children: [
                 Image.asset(image, height: ResponsiveHelper.height(context, 20), width: ResponsiveHelper.width(context, 20)),
                 SizedBox(width: ResponsiveHelper.width(context, 8)),
-                CustText.formLabel(label,color:  isSelected ? AppColors.blue : AppColors.textColor4)
+                CustText.detailLabel(label,color:  isSelected ? AppColors.blue : AppColors.textColor4)
               ],
             ),
           ),

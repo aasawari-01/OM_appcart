@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:om_appcart/constants/colors.dart';
 import 'package:om_appcart/constants/app_constants.dart';
+import '../../../constants/strings.dart';
 import '../../../utils/responsive_helper.dart';
 import '../../../view/widgets/accordion_card.dart';
 import '../../../view/widgets/cust_button.dart';
@@ -38,7 +39,7 @@ class LostAndFoundDetailScreen extends GetView<LostAndFoundDetailController> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
-        title: 'Lost & Found Details',
+        title: AppStrings.lostAndFoundDetails,
         showDrawer: false,
         isForm: true,
         onLeadingPressed: () => Get.back(),
@@ -55,7 +56,7 @@ class LostAndFoundDetailScreen extends GetView<LostAndFoundDetailController> {
                   showDialog(
                     context: context,
                     builder: (context) => CustomDialog(
-                      'You need an active internet connection to edit records.',
+                      AppStrings.needInternetToEdit,
                       onOk: () => Navigator.pop(context),
                     ),
                   );
@@ -81,11 +82,11 @@ class LostAndFoundDetailScreen extends GetView<LostAndFoundDetailController> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text('Failed to load details'),
+                const Text(AppStrings.failedToLoadDetails),
                 const SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: controller.fetchDetail,
-                  child: const Text('Retry'),
+                  child: const Text(AppStrings.retry),
                 ),
               ],
             ),
@@ -129,7 +130,7 @@ class LostAndFoundDetailScreen extends GetView<LostAndFoundDetailController> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: CustText(
-                        name: record.isActive ? 'Active' : 'In-Active',
+                        name: record.isActive ? AppStrings.statusActive : AppStrings.statusInActive,
                         size: 1.2,
                         color: record.isActive ? const Color(0xFF4CAF50) : const Color(0xFFF44336),
                         fontWeightName: FontWeight.w500,
@@ -148,11 +149,11 @@ class LostAndFoundDetailScreen extends GetView<LostAndFoundDetailController> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _buildSummaryItem('Created On', record.date != null ? AppDateUtils.formatDate(record.date!) : 'N/A'),
+                    _buildSummaryItem('Created On', record.date != null ? AppDateUtils.formatDate(record.date!) : AppStrings.notAvailable),
                     const SizedBox(width: 8),
-                    _buildSummaryItem('Created By', record.createdByDetail?.fullName.toTitle() ?? 'N/A'),
+                    _buildSummaryItem('Created By', record.createdByDetail?.fullName.toTitle() ?? AppStrings.notAvailable),
                     const SizedBox(width: 8),
-                    _buildSummaryItem('Match Status', record.matchStatusText, valueColor: record.matchStatusColor),
+                    _buildSummaryItem(AppStrings.matchStatus, record.matchStatusText, valueColor: record.matchStatusColor),
                   ],
                 ),
               ),
@@ -178,22 +179,22 @@ class LostAndFoundDetailScreen extends GetView<LostAndFoundDetailController> {
     List<Widget> sections = [];
 
     sections.add(AccordionCard(
-      title: 'Basic Details',
+      title: AppStrings.basicDetails,
       child: Column(
         children: [
           _buildDetailRow(
-            _buildDetailField(context, 'Registered As', record.registerAs.toTitle()),
-            _buildDetailField(context, 'Station', record.stations?.name.toTitle() ?? 'N/A'),
+            _buildDetailField(context, AppStrings.registeredAs, record.registerAs.toTitle()),
+            _buildDetailField(context, AppStrings.station, record.stations?.name.toTitle() ?? AppStrings.notAvailable),
           ),
           const SizedBox(height: 16),
           _buildDetailRow(
-            _buildDetailField(context, '${record.registerAs.toTitle()} Date', record.date != null ? AppDateUtils.formatDateTime(record.date!) : 'N/A'),
-            _buildDetailField(context, isFound ? 'What Article Found' : 'What Article Lost', record.displayArticleName.toTitle()),
+            _buildDetailField(context, '${record.registerAs.toTitle()} ${AppStrings.date}', record.date != null ? AppDateUtils.formatDateTime(record.date!) : AppStrings.notAvailable),
+            _buildDetailField(context, isFound ? AppStrings.whatArticleFound : AppStrings.whatArticleLost, record.displayArticleName.toTitle()),
           ),
           const SizedBox(height: 16),
           _buildDetailRow(
-            _buildDetailField(context, isFound ? 'Place of Article Found' : 'Place of Article Lost', record.displayArticlePlace.toTitle()),
-            _buildDetailField(context, 'Internal Notes', record.internalNotes?.capitalizefirst() ?? 'No notes'),
+            _buildDetailField(context, isFound ? AppStrings.placeOfArticleFound : AppStrings.placeOfArticleLost, record.displayArticlePlace.toTitle()),
+            _buildDetailField(context, AppStrings.internalNotes, record.internalNotes?.capitalizefirst() ?? AppStrings.noNotes),
           ),
         ],
       ),
@@ -201,21 +202,21 @@ class LostAndFoundDetailScreen extends GetView<LostAndFoundDetailController> {
     sections.add(const SizedBox(height: 16));
 
     sections.add(AccordionCard(
-      title: 'Item Details',
+      title: AppStrings.itemDetails,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildDetailRow(
-            _buildDetailField(context, 'Color', record.color?.toTitle() ?? 'N/A'),
-            _buildDetailField(context, 'Category', record.category?.toTitle() ?? 'N/A'),
+            _buildDetailField(context, AppStrings.color, record.color?.toTitle() ?? AppStrings.notAvailable),
+            _buildDetailField(context, AppStrings.category, record.category?.toTitle() ?? AppStrings.notAvailable),
           ),
           const SizedBox(height: 16),
           _buildDetailRow(
-            _buildDetailField(context, 'Quantity in No', record.quantity?.toString() ?? 'N/A'),
-            _buildDetailField(context, 'Estimated Value', '₹${record.estimateValue ?? '0.00'} /-'),
+            _buildDetailField(context, AppStrings.quantityInNo, record.quantity?.toString() ?? AppStrings.notAvailable),
+            _buildDetailField(context, AppStrings.estimatedValue, '₹${record.estimateValue ?? '0.00'} /-'),
           ),
           const SizedBox(height: 16),
-          _buildDetailField(context, 'Description', record.description?.capitalizefirst() ?? 'No description provided'),
+          _buildDetailField(context, AppStrings.description, record.description?.capitalizefirst() ?? AppStrings.noDescriptionProvided),
         ],
       ),
     ));
@@ -223,11 +224,11 @@ class LostAndFoundDetailScreen extends GetView<LostAndFoundDetailController> {
 
     if (isFound) {
       sections.add(AccordionCard(
-        title: 'Found Attachments',
+        title: AppStrings.foundAttachments,
         child: Column(
           children: [
           if (record.foundAttachments.isEmpty)
-            const CustText(name: 'No attachments found', size: 1.1, color: AppColors.textColor4)
+            const CustText(name: AppStrings.noAttachmentsFound, size: 1.1, color: AppColors.textColor4)
           else ...[
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -264,7 +265,7 @@ class LostAndFoundDetailScreen extends GetView<LostAndFoundDetailController> {
             ),
             const SizedBox(height: 12),
             CustText(
-              name: 'Uploaded on ${record.createdAt != null ? AppDateUtils.formatDate(record.createdAt!) : 'N/A'}',
+              name: '${AppStrings.uploadedOn} ${record.createdAt != null ? AppDateUtils.formatDate(record.createdAt!) : AppStrings.notAvailable}',
               size: 1.1,
               color: AppColors.textColor4,
             ),
@@ -278,32 +279,25 @@ class LostAndFoundDetailScreen extends GetView<LostAndFoundDetailController> {
     if (record.matchStatus >= 3) {
       if (record.matches != null) {
          sections.add(AccordionCard(
-            title: 'Matched Result',
+            title: AppStrings.matchedResult,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 8),
                 MatchedItemCard(item: record.matches!),
                 const Divider(height: 32, thickness: 1, color: Color(0xFFF1F5F9)),
-                const Padding(
-                  padding: EdgeInsets.only(left: 4, bottom: 12),
-                  child: CustText(
-                    name: 'Match Breakdown',
-                    size: 1.2,
-                    fontWeightName: FontWeight.bold,
-                    color: AppColors.black,
-                  ),
-                ),
+                CustText.sectionHeader(AppStrings.matchBreakdown),
+                const SizedBox(height: AppConstants.sectionSpacing,),
                 Wrap(
                   spacing: 8,
                   runSpacing: 10,
                   children: [
-                    _buildBreakdownItemTag(TablerIcons.category, 'Category', record.breakdownPassCount?['category'] ?? 0),
-                    _buildBreakdownItemTag(TablerIcons.palette, 'Color', record.breakdownPassCount?['color'] ?? 0),
-                    _buildBreakdownItemTag(TablerIcons.building_community, 'Station', record.breakdownPassCount?['station'] ?? 0),
-                    _buildBreakdownItemTag(TablerIcons.calendar, 'Date', record.breakdownPassCount?['date'] ?? 0),
-                    _buildBreakdownItemTag(TablerIcons.map_pin, 'Place', record.breakdownPassCount?['place'] ?? 0),
-                    _buildBreakdownItemTag(TablerIcons.notes, 'Description', record.breakdownPassCount?['description'] ?? 0),
+                    _buildBreakdownItemTag(TablerIcons.category, AppStrings.category, record.breakdownPassCount?['category'] ?? 0),
+                    _buildBreakdownItemTag(TablerIcons.palette, AppStrings.color, record.breakdownPassCount?['color'] ?? 0),
+                    _buildBreakdownItemTag(TablerIcons.building_community, AppStrings.station, record.breakdownPassCount?['station'] ?? 0),
+                    _buildBreakdownItemTag(TablerIcons.calendar, AppStrings.date, record.breakdownPassCount?['date'] ?? 0),
+                    _buildBreakdownItemTag(TablerIcons.map_pin, AppStrings.place, record.breakdownPassCount?['place'] ?? 0),
+                    _buildBreakdownItemTag(TablerIcons.notes, AppStrings.description, record.breakdownPassCount?['description'] ?? 0),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -315,30 +309,30 @@ class LostAndFoundDetailScreen extends GetView<LostAndFoundDetailController> {
 
       if (!isFound) {
         sections.add(AccordionCard(
-          title: 'Verification',
+          title: AppStrings.verification,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-             _buildDetailField(context, 'Verified Color', record.verifiedColor?.toTitle() ?? (record.color?.toTitle() ?? 'N/A')),
+             _buildDetailField(context, AppStrings.verifiedColor, record.verifiedColor?.toTitle() ?? (record.color?.toTitle() ?? AppStrings.notAvailable)),
              const SizedBox(height: 16),
-             _buildDetailField(context, 'ID Proof', record.verifiedIdProof?.toTitle() ?? 'N/A'),
+             _buildDetailField(context, AppStrings.idProof, record.verifiedIdProof?.toTitle() ?? AppStrings.notAvailable),
              const SizedBox(height: 16),
-             _buildDetailField(context, 'Unique Identification', record.verifiedUniqueIdentification ?? 'N/A'),
+             _buildDetailField(context, AppStrings.uniqueIdentification, record.verifiedUniqueIdentification ?? AppStrings.notAvailable),
           ],
         ),
       ));
         sections.add(const SizedBox(height: 16));
 
         sections.add(AccordionCard(
-          title: 'Handover',
+          title: AppStrings.handover,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-            _buildDetailField(context, 'Handover To', record.handoverToName?.toTitle() ?? 'N/A'),
+            _buildDetailField(context, AppStrings.handoverTo, record.handoverToName?.toTitle() ?? AppStrings.notAvailable),
             const SizedBox(height: 16),
-            _buildDetailField(context, 'Handover Date', record.handoverDate != null ? AppDateUtils.formatDate(record.handoverDate!) : 'N/A'),
+            _buildDetailField(context, AppStrings.handoverDate, record.handoverDate != null ? AppDateUtils.formatDate(record.handoverDate!) : AppStrings.notAvailable),
             const SizedBox(height: 16),
-            _buildDetailField(context, 'Remarks', record.remarks?.capitalizefirst() ?? 'N/A'),
+            _buildDetailField(context, AppStrings.remarks, record.remarks?.capitalizefirst() ?? AppStrings.notAvailable),
           ],
         ),
       ));
@@ -384,7 +378,7 @@ class LostAndFoundDetailScreen extends GetView<LostAndFoundDetailController> {
           const SizedBox(width: 6),
           CustText(
             name: '$label: $score%',
-            size: 1.0,
+            size: AppConstants.detailLabelSize,
             color: isHighlyMatched ? AppColors.blue : AppColors.textColor,
             fontWeightName: isHighlyMatched ? FontWeight.bold : FontWeight.w500,
           ),

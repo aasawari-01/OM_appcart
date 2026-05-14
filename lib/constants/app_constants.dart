@@ -8,7 +8,7 @@ class AppConstants {
   static const double verticalPadding = 12.0;
 
   // Spacing Standards
-  static const double sectionSpacing = 24.0;
+  static const double sectionSpacing = 20.0;
   static const double elementSpacing = 16.0;
   static const double labelSpacing = 4.0;
   static const double cardInnerSpacing = 12.0;
