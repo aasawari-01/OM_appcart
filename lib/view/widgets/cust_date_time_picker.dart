@@ -17,6 +17,7 @@ class CustDateTimePicker extends StatelessWidget {
   final ValueChanged<DateTime?> onDateTimeSelected;
   final CustDateTimePickerType pickerType;
   final String? Function(String?)? validator;
+  final DateTime? lastDate;
 
   const CustDateTimePicker({
     Key? key,
@@ -26,10 +27,14 @@ class CustDateTimePicker extends StatelessWidget {
     required this.onDateTimeSelected,
     this.pickerType = CustDateTimePickerType.dateTime,
     this.validator,
+  this.lastDate,
   }) : super(key: key);
 
   Future<void> _pickDateTime(BuildContext context) async {
-    final DateTime initial = selectedDateTime ?? DateTime.now();
+    final DateTime maxAllowed = lastDate ?? DateTime(2100, 12, 31);
+    final DateTime initial = (selectedDateTime != null && !selectedDateTime!.isAfter(maxAllowed))
+        ? selectedDateTime!
+        : maxAllowed;
 
     OmniDateTimePickerType omniType;
     switch (pickerType) {
@@ -49,7 +54,7 @@ class CustDateTimePicker extends StatelessWidget {
     double targetHeight;
     switch (pickerType) {
       case CustDateTimePickerType.date:
-        targetHeight = 370;
+        targetHeight = 390;
         break;
       case CustDateTimePickerType.time:
         targetHeight = 260;
@@ -65,7 +70,7 @@ class CustDateTimePicker extends StatelessWidget {
       initialDate: initial,
       type: omniType,
       firstDate: DateTime(1900, 1, 1),
-      lastDate: DateTime(2100, 12, 31),
+      lastDate: lastDate ?? DateTime(2100, 12, 31),
 
       is24HourMode: false,
       isShowSeconds: false,
@@ -108,8 +113,8 @@ class CustDateTimePicker extends StatelessWidget {
           constraints: BoxConstraints.tightFor(height: targetHeight)
         ),
 
-        colorScheme: const ColorScheme.light(
-          primary: AppColors.blue,
+        colorScheme: ColorScheme.light(
+          primary: AppColors.primary,
           onPrimary: Colors.white,
           surface: AppColors.white1,
           onSurface: AppColors.textColor,
@@ -119,7 +124,7 @@ class CustDateTimePicker extends StatelessWidget {
           Theme.of(context).textTheme,
         ).copyWith(
           titleLarge: GoogleFonts.outfit(
-            color: AppColors.blue,
+            color: AppColors.primary,
             fontWeight: FontWeight.w700,
             fontSize: 16,
           ),
@@ -179,7 +184,7 @@ class CustDateTimePicker extends StatelessWidget {
                         alignment: Alignment.centerLeft,
                         child: CustText(
                           name: "Select Date",
-                          color: AppColors.blue.withOpacity(0.8),
+                          color: AppColors.primary.withOpacity(0.8),
                           fontWeightName: FontWeight.w600,
                           size: 1.8,
                         ),
@@ -199,11 +204,11 @@ class CustDateTimePicker extends StatelessWidget {
                           },
                           // Set professional padding for the calendar
                           padding: const EdgeInsets.symmetric(vertical: 0),
-                          leadingDateTextStyle: GoogleFonts.outfit(color: AppColors.blue, fontWeight: FontWeight.w600),
+                          leadingDateTextStyle: GoogleFonts.outfit(color: AppColors.primary, fontWeight: FontWeight.w600),
                           selectedCellDecoration: const BoxDecoration(
                             color: AppColors.white1,
                             shape: BoxShape.rectangle,
-                            border: Border.fromBorderSide(BorderSide(color: AppColors.blue)),
+                            border: Border.fromBorderSide(BorderSide(color: AppColors.primary)),
                             borderRadius: BorderRadius.all(Radius.circular(5)),
                           ),
                           selectedCellTextStyle: GoogleFonts.outfit(color: AppColors.textColor, fontWeight: FontWeight.w500, fontSize: 16),
@@ -212,16 +217,16 @@ class CustDateTimePicker extends StatelessWidget {
                           disabledCellsDecoration: const BoxDecoration(
                             color: AppColors.white1,
                             shape: BoxShape.rectangle,
-                            border: Border.fromBorderSide(BorderSide(color: AppColors.blue)),
+                            border: Border.fromBorderSide(BorderSide(color: AppColors.primary)),
                             borderRadius: BorderRadius.all(Radius.circular(5)),
                           ),
                           disabledCellsTextStyle: GoogleFonts.outfit(color: AppColors.textColor, fontWeight: FontWeight.w500, fontSize: 16),
                           enabledCellsTextStyle: GoogleFonts.outfit(color: AppColors.textColor, fontWeight: FontWeight.w500, fontSize: 16),
                           selectedDate: DateTime.now(),
                           daysOfTheWeekTextStyle: GoogleFonts.outfit(fontSize: 13, color: AppColors.hintColor, fontWeight: FontWeight.w500),
-                          slidersColor: AppColors.blue,
-                          highlightColor: AppColors.blue.withOpacity(0.1),
-                          splashColor: AppColors.blue.withOpacity(0.08),
+                          slidersColor: AppColors.primary,
+                          highlightColor: AppColors.primary.withOpacity(0.1),
+                          splashColor: AppColors.primary.withOpacity(0.08),
                           centerLeadingDate: true,
                         ),
                       ),
@@ -233,11 +238,11 @@ class CustDateTimePicker extends StatelessWidget {
                         children: [
                           TextButton(
                             onPressed: () => Navigator.pop(dialogContext, null),
-                            child: CustText(name: "Cancel", color: AppColors.blue, fontWeightName: FontWeight.bold, size: 1.6),
+                            child: CustText(name: "Cancel", color: AppColors.primary, fontWeightName: FontWeight.bold, size: 1.6),
                           ),
                           TextButton(
                             onPressed: () => Navigator.pop(dialogContext, internalTempDate),
-                            child: CustText(name: "OK", color: AppColors.blue, fontWeightName: FontWeight.bold, size: 1.6),
+                            child: CustText(name: "OK", color: AppColors.primary, fontWeightName: FontWeight.bold, size: 1.6),
                           ),
                         ],
                       ),
@@ -302,10 +307,10 @@ class CustDateTimePicker extends StatelessWidget {
                     data: ThemeData(
                       useMaterial3: true,
                       colorScheme: const ColorScheme.light(
-                        primary: AppColors.blue,
+                        primary: AppColors.primary,
                         onPrimary: Colors.white,
                         primaryContainer: AppColors.white1,
-                        onPrimaryContainer: AppColors.blue,
+                        onPrimaryContainer: AppColors.primary,
                         surface: AppColors.white1,
                         onSurface: AppColors.textColor,
                       ),
@@ -320,19 +325,19 @@ class CustDateTimePicker extends StatelessWidget {
                         padding: EdgeInsets.zero,
                         entryModeIconColor: Colors.transparent,
                         helpTextStyle: GoogleFonts.outfit(
-                              color: AppColors.blue,
+                              color: AppColors.primary,
                               fontWeight: FontWeight.w600,
                               fontSize: 20,
                         ),
                         hourMinuteTextStyle: GoogleFonts.outfit(
                           fontSize: 22, // 🔥 bigger
                           fontWeight: FontWeight.w700,
-                          color: AppColors.blue,
+                          color: AppColors.primary,
                         ),
                         cancelButtonStyle: ButtonStyle(textStyle: WidgetStatePropertyAll(GoogleFonts.outfit(fontSize: 18,fontWeight: FontWeight.bold))),
                          confirmButtonStyle:  ButtonStyle(textStyle: WidgetStatePropertyAll(GoogleFonts.outfit(fontSize: 18,fontWeight: FontWeight.bold))),
                         hourMinuteShape: RoundedRectangleBorder(
-                          side: BorderSide(color: AppColors.blue, width: 1),
+                          side: BorderSide(color: AppColors.primary, width: 1),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         dialTextStyle: GoogleFonts.outfit(
@@ -341,9 +346,9 @@ class CustDateTimePicker extends StatelessWidget {
                         dayPeriodTextStyle: GoogleFonts.outfit(
                           fontSize: 16,
                         ),
-                        dialHandColor: AppColors.blue,
+                        dialHandColor: AppColors.primary,
                         dialBackgroundColor: AppColors.white1,
-                        hourMinuteTextColor: AppColors.blue,
+                        hourMinuteTextColor: AppColors.primary,
                       ),
                     ),
                     child: child!,
@@ -381,10 +386,10 @@ class CustDateTimePicker extends StatelessWidget {
   //               data: ThemeData(
   //                 useMaterial3: true,
   //                 colorScheme: const ColorScheme.light(
-  //                   primary: AppColors.blue,
+  //                   primary: AppColors.primary,
   //                   onPrimary: Colors.white,
   //                   primaryContainer: AppColors.white1,
-  //                   onPrimaryContainer: AppColors.blue,
+  //                   onPrimaryContainer: AppColors.primary,
   //                   surface: AppColors.white1,
   //                   onSurface: AppColors.textColor,
   //                   surfaceContainerHighest: AppColors.white1,
@@ -397,21 +402,21 @@ class CustDateTimePicker extends StatelessWidget {
   //                   backgroundColor: AppColors.white1,
   //                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
   //                   hourMinuteShape: RoundedRectangleBorder(
-  //                     side: const BorderSide(color: AppColors.blue, width: 1),
+  //                     side: const BorderSide(color: AppColors.primary, width: 1),
   //                     borderRadius: BorderRadius.circular(5),
   //                   ),
   //                   dayPeriodShape: RoundedRectangleBorder(
-  //                     side: const BorderSide(color: AppColors.blue, width: 1),
+  //                     side: const BorderSide(color: AppColors.primary, width: 1),
   //                     borderRadius: BorderRadius.circular(5),
   //                   ),
   //                   hourMinuteColor: AppColors.white1,
-  //                   hourMinuteTextColor: AppColors.blue,
-  //                   dialHandColor: AppColors.blue,
+  //                   hourMinuteTextColor: AppColors.primary,
+  //                   dialHandColor: AppColors.primary,
   //                   dialBackgroundColor: AppColors.white1,
   //                   dialTextColor: AppColors.textColor,
-  //                   entryModeIconColor: AppColors.blue,
+  //                   entryModeIconColor: AppColors.primary,
   //                   helpTextStyle: GoogleFonts.outfit(
-  //                     color: AppColors.blue,
+  //                     color: AppColors.primary,
   //                     fontWeight: FontWeight.w600,
   //                     fontSize: 14,
   //                   ),
@@ -420,10 +425,10 @@ class CustDateTimePicker extends StatelessWidget {
   //                   dayPeriodTextStyle: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.bold),
   //                   dialTextStyle: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w500),
   //                   cancelButtonStyle: ButtonStyle(
-  //                     textStyle: WidgetStatePropertyAll(GoogleFonts.outfit(color: AppColors.blue, fontWeight: FontWeight.bold, fontSize: 16))
+  //                     textStyle: WidgetStatePropertyAll(GoogleFonts.outfit(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 16))
   //                   ),
   //                   confirmButtonStyle: ButtonStyle(
-  //                     textStyle: WidgetStatePropertyAll(GoogleFonts.outfit(color: AppColors.blue, fontWeight: FontWeight.bold, fontSize: 16))
+  //                     textStyle: WidgetStatePropertyAll(GoogleFonts.outfit(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 16))
   //                   ),
   //                 ),
   //               ),
@@ -467,6 +472,7 @@ class CustDateTimePicker extends StatelessWidget {
           onTap: () => _pickDateTime(context),
           child: AbsorbPointer(
             child: CustomTextField(
+              key: ValueKey(displayText), // ✅ add this
               controller: TextEditingController(text: displayText),
               hintText: hint,
               validator: validator,

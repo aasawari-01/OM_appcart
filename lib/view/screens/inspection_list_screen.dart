@@ -118,9 +118,9 @@ class _InspectionListScreenState extends State<InspectionListScreen> {
       case 'pending':
         return AppColors.yellow;
       case 'completed':
-        return AppColors.barColor4; 
+        return AppColors.barColor4;
       default:
-        return AppColors.blue;
+        return AppColors.primary;
     }
   }
 
@@ -269,12 +269,12 @@ class _InspectionListScreenState extends State<InspectionListScreen> {
                         subtitleTags: [
                           TagData(
                             text: data['plan'] ?? '',
-                            backgroundColor: AppColors.blue.withOpacity(0.05),
+                            backgroundColor: AppColors.primary.withOpacity(0.05),
                             textColor: AppColors.textColor,
                           ),
                           TagData(
                             text: data['department'] ?? '',
-                            backgroundColor: AppColors.blue.withOpacity(0.05),
+                            backgroundColor: AppColors.primary.withOpacity(0.05),
                             textColor: AppColors.textColor,
                           ),
                         ],

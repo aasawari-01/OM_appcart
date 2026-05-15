@@ -78,7 +78,7 @@ class MatchedItemCard extends StatelessWidget {
                 Expanded(
                   child: Row(
                     children: [
-                      if (showIcons) const Icon(TablerIcons.barcode, size: 18, color: AppColors.blue),
+                      if (showIcons) Icon(TablerIcons.barcode, size: 18, color: AppColors.primary),
                       if (showIcons) const SizedBox(width: 8),
                       Flexible(
                         child: CustText(

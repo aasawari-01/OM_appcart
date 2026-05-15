@@ -37,7 +37,12 @@ class AuthService {
         'Unable to login. (${response.statusCode})';
     throw AuthException(message);
   }
+
 }
+
+
+
+
 
 class AuthException implements Exception {
   AuthException(this.message);

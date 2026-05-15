@@ -3,6 +3,7 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../constants/app_images.dart';
 import '../../constants/colors.dart';
 import '../../feature/lost_and_found/view/lost_and_found_list_screen.dart';
 import '../../feature/user_profile/view/profile_view.dart';
@@ -32,7 +33,7 @@ import '../screens/tom_shift_login_list_screen.dart';
 import '../../service/quick_actions_controller.dart';
 import 'package:om_appcart/service/auth_manager.dart';
 import 'cust_text.dart';
-import '../screens/settings.dart';
+import '../../feature/setting/view/settings.dart';
 import '../../feature/user_profile/controller/user_profile_controller.dart';
 import '../../service/network_service/app_urls.dart';
 import '../../utils/string_utils.dart';
@@ -92,7 +93,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
       MenuItem(
         title: 'Failure',
         key: 'failure',
-        iconPath: 'assets/images/drawer/failure.png',
+        iconPath: AppAssets.icon('failure.png'),
         children: [
           MenuItem(title: 'Station Failure', key: 'station_failure', screen: StationFailureListScreen()),
         ],
@@ -100,7 +101,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
       MenuItem(
         title: 'Maintenance',
         key: 'maintenance',
-        iconPath: 'assets/images/drawer/maintainance.png',
+        iconPath: AppAssets.icon('maint.png'),
         children: [
           MenuItem(title: 'Inspection', key: 'inspection', screen: const InspectionListScreen()),
           // MenuItem(title: 'Report', key: 'report', screen: null),
@@ -110,7 +111,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
       MenuItem(
         title: 'Operations',
         key: 'operations',
-        iconPath: 'assets/images/drawer/operation.png',
+        iconPath: AppAssets.icon('opera.png'),
         children: [
           MenuItem(
             title: 'Station Operations',
@@ -151,7 +152,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
       MenuItem(
         title: 'Settings',
         key: 'settings',
-        iconPath: 'assets/images/drawer/setting.png',
+        iconPath: AppAssets.icon('setting.png'),
         screen:  Settings(),
         children: []
       ),
@@ -341,7 +342,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                                 child: CustText(
                                   name: 'View Profile',
                                   size: 1.5,
-                                  color: AppColors.blue,
+                                  color: AppColors.primary,
                                   fontWeightName: FontWeight.w600,
                                 ),
                               ),
@@ -494,7 +495,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             key: Key(sectionKey + (_searchText.isNotEmpty ? '_search' : '')),
             tilePadding: EdgeInsets.only(left: isSubSection ? 48 : 24, right: 16, top: 0, bottom: 0),
             leading: (iconPath != null && !isSubSection)
-              ? Image.asset(iconPath, width: 24, height: 24)
+              ? Image.asset(iconPath, width: 24, height: 24,)
               : null,
             title: CustText(
               name: title,
@@ -557,7 +558,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
           title: CustText(
             name: name,
             size: 1.5,
-            color: _selectedMenu == key ? AppColors.blue : AppColors.textColor.withOpacity(0.8), // Highlight selected
+            color: _selectedMenu == key ? AppColors.primary : AppColors.textColor.withOpacity(0.8), // Highlight selected
             fontWeightName: _selectedMenu == key ? FontWeight.w600 : FontWeight.w400,
           ),
           onTap: () {
@@ -579,7 +580,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             },
           onLongPress: screen == null ? null : () => _showPinMenu(name, key, screen!),
           selected: _selectedMenu == key,
-          selectedTileColor: AppColors.blue.withOpacity(0.05), // Light blue background for selected
+          selectedTileColor: AppColors.primary.withOpacity(0.05), // Light blue background for selected
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
         ),
       ],

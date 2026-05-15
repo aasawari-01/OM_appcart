@@ -98,9 +98,9 @@ class LostAndFoundDetailScreen extends GetView<LostAndFoundDetailController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (controller.isLoading.value)
-                const LinearProgressIndicator(
+                LinearProgressIndicator(
                   minHeight: 2,
-                  color: AppColors.blue,
+                  color: AppColors.primary,
                   backgroundColor: Colors.transparent,
                 ),
 
@@ -374,12 +374,12 @@ class LostAndFoundDetailScreen extends GetView<LostAndFoundDetailController> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: isHighlyMatched ? AppColors.blue : AppColors.textColor4),
+          Icon(icon, size: 14, color: isHighlyMatched ? AppColors.primary : AppColors.textColor4),
           const SizedBox(width: 6),
           CustText(
             name: '$label: $score%',
             size: AppConstants.detailLabelSize,
-            color: isHighlyMatched ? AppColors.blue : AppColors.textColor,
+            color: isHighlyMatched ? AppColors.primary : AppColors.textColor,
             fontWeightName: isHighlyMatched ? FontWeight.bold : FontWeight.w500,
           ),
         ],

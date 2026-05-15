@@ -595,7 +595,7 @@ class _FailureFormState extends State<FailureForm> {
                     height: 32,
                     margin: const EdgeInsets.only(right: 12, top: 4),
                     decoration: BoxDecoration(
-                      color: AppColors.blue.withOpacity(0.1),
+                      color: AppColors.primary.withOpacity(0.1),
                       shape: BoxShape.circle,
                     ),
                     alignment: Alignment.center,
@@ -603,7 +603,7 @@ class _FailureFormState extends State<FailureForm> {
                       name: '${index + 1}', 
                       size: 1.1, 
                       fontWeightName: FontWeight.bold,
-                      color: AppColors.blue,
+                      color: AppColors.primary,
                     ),
                   ),
                   Expanded(

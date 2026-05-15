@@ -92,13 +92,13 @@ class ProfileView extends GetView<UserProfileController> {
             children: [
               Container(
                 padding: EdgeInsets.all(ResponsiveHelper.spacing(context, AppConstants.cardPadding)),
-                decoration: const BoxDecoration(
+                decoration:  BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment(-1, -0.2),
                     end: Alignment(1, 0.2),
                     colors: [
-                      Color(0xFF007EAB),
-                      Color(0xFF5CC1E5),
+                      AppColors.primary.withOpacity(1),
+                      AppColors.primary.withOpacity(0.5),
                     ],
                   ),
                 ),
@@ -212,11 +212,11 @@ class ProfileView extends GetView<UserProfileController> {
       ),
       child: TabBar(
         controller: controller.tabController,
-        labelColor: AppColors.blue,
+        labelColor: AppColors.primary,
         isScrollable: true,
         tabAlignment: TabAlignment.start,
         unselectedLabelColor: AppColors.textColor4,
-        indicatorColor: AppColors.blue,
+        indicatorColor: AppColors.primary,
         indicatorSize: TabBarIndicatorSize.tab,
         labelStyle: GoogleFonts.outfit(fontWeight: FontWeight.w600, fontSize: 16),
         unselectedLabelStyle: GoogleFonts.outfit(fontWeight: FontWeight.w400, fontSize: 16),

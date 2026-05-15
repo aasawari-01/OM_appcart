@@ -145,7 +145,7 @@ class LostFoundTableRecord {
 
   Color get matchStatusColor {
     switch (matchStatus) {
-      case 1: return AppColors.blue;
+      case 1: return AppColors.primary;
       case 2: return AppColors.red;
       case 3: return AppColors.orange;
       case 4: return AppColors.green;

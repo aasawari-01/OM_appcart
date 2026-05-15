@@ -76,6 +76,9 @@ class EditProfileController extends GetxController with GetSingleTickerProviderS
 
   bool _isScrollingFromAuto = false;
 
+  // ADD this
+  var selectedDob = Rx<DateTime?>(null);
+
   @override
   void onInit() {
     super.onInit();
@@ -200,6 +203,9 @@ class EditProfileController extends GetxController with GetSingleTickerProviderS
       final details = data.userDetails;
       if (details != null) {
         dobController.text = details.dateOfBirth ?? '';
+        selectedDob.value = details.dateOfBirth != null && details.dateOfBirth!.isNotEmpty
+            ? AppDateUtils.parseDate(details.dateOfBirth!)
+            : null;
         dojController.text = details.dateOfJoining ?? '';
 
         bloodGroupController.text = (details.bloodGroup ?? '').toUpperCase();
@@ -248,6 +254,8 @@ class EditProfileController extends GetxController with GetSingleTickerProviderS
         }
       }
 
+
+
       if (data.cities != null && data.cities!.isNotEmpty) empCityController.text = data.cities!.first.name;
       if (data.departments != null && data.departments!.isNotEmpty) deptController.text = data.departments!.first.name;
       if (data.stations != null && data.stations!.isNotEmpty) selectedStation.value = data.stations!.first.name;
@@ -286,7 +294,7 @@ class EditProfileController extends GetxController with GetSingleTickerProviderS
       title: 'Confirm Update',
       message: 'Are you sure you want to update your profile data?',
       confirmText: 'Update',
-      confirmColor: AppColors.blue,
+      confirmColor: AppColors.primary,
       icon: TablerIcons.device_floppy,
       onConfirm: () => confirm = true,
       onCancel: () => confirm = false,

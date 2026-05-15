@@ -29,6 +29,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   await Firebase.initializeApp();
+  await ThemeManager.init();
   await Get.putAsync(() => NotificationService().init());
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   Get.put(StationController(), permanent: true);
@@ -44,23 +45,30 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'O & M Dashboard',
-      theme: ThemeData(
-        scaffoldBackgroundColor: AppColors.bgColor,
-      ),
-      builder: (context, child) {
-        return Stack(
-          children: [
-            child ?? const SizedBox.shrink(),
-          ],
-        );
-      },
-      getPages: [
-        GetPage(name: '/notifications', page: () => const NotificationScreen()),
-      ],
-      home: isLoggedIn ? TabScreen(index: 0) : const OnboardingScreen(),
+    return ValueListenableBuilder<AppPrimaryColor>(
+        valueListenable: ThemeManager.primaryColorNotifier,
+        builder: (context, _, child) {
+          return GetMaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'O & M Dashboard',
+            theme: ThemeData(
+              scaffoldBackgroundColor: AppColors.bgColor,
+            ),
+            builder: (context, child) {
+              return Stack(
+                children: [
+                  child ?? const SizedBox.shrink(),
+                ],
+              );
+            },
+            getPages: [
+              GetPage(name: '/notifications',
+                  page: () => const NotificationScreen()),
+            ],
+            home: isLoggedIn ? TabScreen(index: 0) : const OnboardingScreen(),
+          );
+        }
+
     );
   }
 }

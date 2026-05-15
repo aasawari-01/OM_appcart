@@ -179,7 +179,7 @@ class _FailureListScreenState extends State<FailureListScreen> with SingleTicker
               child: TabBar(
                 controller: _tabController,
                 indicator: BoxDecoration(
-                  color: AppColors.textColor3,
+                  color: AppColors.primary,
                   borderRadius: BorderRadius.circular(8),
                   boxShadow: [
                     BoxShadow(
@@ -278,12 +278,12 @@ class _FailureListScreenState extends State<FailureListScreen> with SingleTicker
                               subtitleTags: [
                                 TagData(
                                   text: failure['priority'] ?? '',
-                                  backgroundColor: AppColors.blue.withOpacity(0.05),
+                                  backgroundColor: AppColors.primary.withOpacity(0.05),
                                   textColor: AppColors.textColor,
                                 ),
                                 // TagData(
                                 //   text: failure['status'] ?? '',
-                                //   backgroundColor: AppColors.blue.withOpacity(0.05),
+                                //   backgroundColor: AppColors.primary.withOpacity(0.05),
                                 //   textColor: AppColors.textColor,
                                 // ),
                               ],

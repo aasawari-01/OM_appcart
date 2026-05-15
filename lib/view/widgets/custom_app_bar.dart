@@ -67,7 +67,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                   child: Icon(
                     showDrawer ? Icons.menu : Icons.arrow_back,
-                    color: AppColors.blue.withOpacity(0.8),
+                    color: AppColors.primary.withOpacity(0.8),
                     size: 18,
                   ),
                 ),
@@ -92,17 +92,18 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   CustText(
                     name: '${currentStep! + 1}/$totalSteps',
                     size: 2.0,
-                    color: AppColors.blue,
+                    color: AppColors.primary,
                     fontWeightName: FontWeight.w600,
                   )
                 else
                   const SizedBox.shrink()
               else
-                Icon(
-                  TablerIcons.filter,
-                  color: AppColors.blue,
-                  size: 24,
-                ),
+                Container()
+                // Icon(
+                //   TablerIcons.filter,
+                //   color: AppColors.primary,
+                //   size: 24,
+                // ),
             ],
           ),
         ),

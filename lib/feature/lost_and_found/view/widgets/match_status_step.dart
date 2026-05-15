@@ -38,7 +38,7 @@ class LFMatchStatusStep extends StatelessWidget {
                     _startMatchAnimation();
                   },
                   size: double.infinity,
-                  color1: AppColors.blue,
+                  color1: AppColors.primary,
                   borderRadius: 4,
                   sHeight: 45,
                   fontSize: 14,
@@ -140,7 +140,7 @@ class LFMatchStatusStep extends StatelessWidget {
               }
             },
             size: 150,
-            color1: AppColors.blue,
+            color1: AppColors.primary,
             borderRadius: 4,
             sHeight: 45,
             fontSize: 14,

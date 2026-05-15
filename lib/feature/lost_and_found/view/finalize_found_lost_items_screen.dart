@@ -68,7 +68,7 @@ class FinalizeFoundLostItemsScreen extends GetView<FinalizeMatchController> {
                 name: 'Submit',
                 onSelected: (val) => controller.submitFinalize(),
                 size: double.infinity,
-                color1: AppColors.blue,
+                color1: AppColors.primary,
                 borderRadius: 4,
                 sHeight: 45,
                 fontSize: 16,
@@ -96,13 +96,13 @@ class FinalizeFoundLostItemsScreen extends GetView<FinalizeMatchController> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? AppColors.blue : const Color(0xFFE0E0E0),
+            color: isSelected ? AppColors.primary : const Color(0xFFE0E0E0),
             width: isSelected ? 1.5 : 0.5,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: AppColors.blue.withOpacity(0.1),
+                    color: AppColors.primary.withOpacity(0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   )
@@ -174,7 +174,7 @@ class FinalizeFoundLostItemsScreen extends GetView<FinalizeMatchController> {
               Positioned(
                 top: 8,
                 right: 8,
-                child: Icon(Icons.check_circle, color: AppColors.blue, size: 24),
+                child: Icon(Icons.check_circle, color: AppColors.primary, size: 24),
               ),
           ],
         ),

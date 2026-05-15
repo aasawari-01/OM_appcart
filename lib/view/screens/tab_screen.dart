@@ -99,7 +99,7 @@ class _TabScreenState extends State<TabScreen> {
               iconSize: 24,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               duration: const Duration(milliseconds: 400),
-              tabBackgroundColor: AppColors.blue.withOpacity(0.7),
+              tabBackgroundColor: AppColors.primary.withOpacity(0.7),
               // active tab bg
               color: Colors.white.withOpacity(0.7),
               selectedIndex: _currentIndex,

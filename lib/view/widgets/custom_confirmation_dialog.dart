@@ -54,13 +54,13 @@ class CustomConfirmationDialog extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: (confirmColor ?? AppColors.blue).withOpacity(0.1),
+                  color: (confirmColor ?? AppColors.primary).withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   icon,
                   size: 24,
-                  color: confirmColor ?? AppColors.blue,
+                  color: confirmColor ?? AppColors.primary,
                 ),
               ),
               const SizedBox(height: 8),
@@ -108,8 +108,8 @@ class CustomConfirmationDialog extends StatelessWidget {
                       Get.back();
                       onConfirm();
                     },
-                    color1: confirmColor ?? AppColors.blue,
-                    color2: confirmColor ?? AppColors.blue,
+                    color1: confirmColor ?? AppColors.primary,
+                    color2: confirmColor ?? AppColors.primary,
                     sHeight: 45,
                   ),
                 ),

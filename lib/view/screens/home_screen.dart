@@ -74,8 +74,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    AppColors.blue.withOpacity(1),
-                    AppColors.blue.withOpacity(0),
+                    AppColors.primary.withOpacity(1),
+                    AppColors.primary.withOpacity(0),
                   ],
                 ),
               ),
@@ -140,9 +140,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                               fontWeightName: FontWeight.w500,
                                             ),
                                             const SizedBox(width: 12),
-                                            const Icon(
+                                            Icon(
                                               TablerIcons.check,
-                                              color: AppColors.blue,
+                                              color: AppColors.primary,
                                               size: 18,
                                             ),
                                           ],
@@ -184,7 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         //   child: CustText(
                         //     name: "RS",
                         //     size: 1.8,
-                        //     color: AppColors.blue,
+                        //     color: AppColors.primary,
                         //     fontWeightName: FontWeight.w600,
                         //   ),
                         // ),
@@ -312,7 +312,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       const StationFailureListScreen()),
                                             );
                                           }, context),
-                                          _iconItem("assets/images/s1.png",
+                                          _iconItem("assets/images/f3.png",
                                               "Station Diary", () {
                                             Navigator.push(
                                               context,
@@ -321,7 +321,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       const StationDiaryScreen()),
                                             );
                                           }, context),
-                                          _iconItem("assets/images/s1.png",
+                                          _iconItem("assets/images/f4.png",
                                               "Inspection", () {
                                             Navigator.push(
                                               context,
@@ -369,7 +369,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           child: CustText(
                                             name: 'View All',
                                             size: 1.8,
-                                            color: AppColors.blue,
+                                            color: AppColors.primary,
                                             fontWeightName: FontWeight.w600,
                                           ),
                                         ),
@@ -610,9 +610,16 @@ class _HomeScreenState extends State<HomeScreen> {
       onTap: onTap,
       child: Column(
         children: [
-          Image.asset(
-            iconImage,
-            height: ResponsiveHelper.height(context, 48),
+          Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(15)
+            ),
+            child: Image.asset(
+              iconImage,
+              height: ResponsiveHelper.height(context, 38),color: AppColors.primary,
+            ),
           ),
           SizedBox(height: ResponsiveHelper.spacing(context, 6)),
           CustText(

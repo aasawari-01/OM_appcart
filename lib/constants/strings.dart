@@ -1,3 +1,5 @@
+import 'colors.dart';
+
 class AppStrings {
   // App info
   static const String appName = 'MetroOps';
@@ -184,4 +186,7 @@ class AppStrings {
   static const String save = 'Save';
   static const String delete = 'Delete';
   static const String edit = 'Edit';
+
+
+
 }

@@ -22,7 +22,7 @@ class CustLoader extends StatelessWidget {
         child: CircularProgressIndicator(
           strokeWidth: strokeWidth,
           valueColor: AlwaysStoppedAnimation<Color>(
-            color ?? AppColors.blue,
+            color ?? AppColors.primary,
           ),
         ),
       ),

@@ -148,8 +148,8 @@ class _CustomUpdateDialogState extends State<CustomUpdateDialog> {
                           widget.onConfirm(_remarkController.text.trim());
                         }
                       },
-                      color1: AppColors.blue,
-                      color2: AppColors.blue,
+                      color1: AppColors.primary,
+                      color2: AppColors.primary,
                       sHeight: 45,
                     ),
                   ),

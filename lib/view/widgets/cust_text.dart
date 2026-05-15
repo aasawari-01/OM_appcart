@@ -31,7 +31,7 @@ class CustText extends StatelessWidget {
       name: name,
       size: AppConstants.sectionHeaderSize,
       fontWeightName: FontWeight.w600,
-      color: color ?? AppColors.gradientEnd,
+      color: color ?? AppColors.primary,
       textAlign: textAlign,
     );
   }

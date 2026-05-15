@@ -105,8 +105,8 @@ class CustomFormDialog extends StatelessWidget {
                   child: CustButton(
                     name: saveButtonText,
                     onSelected: (_) => onSave(),
-                    color1: AppColors.blue,
-                    color2: AppColors.blue,
+                    color1: AppColors.primary,
+                    color2: AppColors.primary,
                     sHeight: 45,
                   ),
                 ),

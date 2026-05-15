@@ -51,7 +51,7 @@ class AccordionCard extends StatelessWidget {
                           child: CustText(
                             name: title,
                             size: 1.4,
-                            color: AppColors.textColor3,
+                            color: AppColors.primary,
                             fontWeightName: FontWeight.w500,
                           ),
                         ),

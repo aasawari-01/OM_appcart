@@ -55,7 +55,7 @@ class FullImageViewer extends StatelessWidget {
                 value: event == null
                     ? null
                     : event.cumulativeBytesLoaded / (event.expectedTotalBytes ?? 1),
-                color: AppColors.blue,
+                color: AppColors.primary,
               ),
             ),
             backgroundDecoration: const BoxDecoration(color: Colors.black),

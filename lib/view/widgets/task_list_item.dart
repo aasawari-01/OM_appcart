@@ -23,7 +23,7 @@ class TaskListItem extends StatelessWidget {
       case 'medium':
         return AppColors.yellow;
       case 'low':
-        return AppColors.blue;
+        return AppColors.primary;
       default:
         return AppColors.textColor4;
     }
@@ -51,7 +51,7 @@ class TaskListItem extends StatelessWidget {
       case 'open':
         return const Color(0xFFDD3737);
       case 'reassigned':
-        return AppColors.blue;
+        return AppColors.primary;
       case 'in process':
         return AppColors.orange;
       case 'pending':
@@ -207,17 +207,17 @@ class TaskListItem extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const CustText(
+                      CustText(
                         name: 'View Details',
                         size: 1.4,
-                        color: AppColors.blue,
+                        color: AppColors.primary,
                         fontWeightName: FontWeight.w500,
                       ),
                       const SizedBox(width: 4),
-                      const Icon(
+                      Icon(
                         Icons.arrow_forward_ios,
                         size: 12,
-                        color: AppColors.blue,
+                        color: AppColors.primary,
                       ),
                     ],
                   ),

@@ -185,10 +185,10 @@ class EditProfileView extends GetView<EditProfileController> {
           Container(
             padding: EdgeInsets.all(ResponsiveHelper.spacing(context, AppConstants.cardPadding)),
             decoration: BoxDecoration(
-              color: AppColors.blue.withOpacity(0.1),
+              color: AppColors.primary.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: AppColors.blue, size: 30),
+            child: Icon(icon, color: AppColors.primary, size: 30),
           ),
           SizedBox(height: ResponsiveHelper.spacing(context, 8)),
           CustText(name: label, size: 1.4),
@@ -204,11 +204,11 @@ class EditProfileView extends GetView<EditProfileController> {
       ),
       child: TabBar(
         controller: controller.tabController,
-        labelColor: AppColors.blue,
+        labelColor: AppColors.primary,
         isScrollable: true,
         tabAlignment: TabAlignment.start,
         unselectedLabelColor: AppColors.textColor4,
-        indicatorColor: AppColors.blue,
+        indicatorColor: AppColors.primary,
         indicatorSize: TabBarIndicatorSize.tab,
         labelStyle: GoogleFonts.outfit(fontWeight: FontWeight.w600, fontSize: 16),
         unselectedLabelStyle: GoogleFonts.outfit(fontWeight: FontWeight.w400, fontSize: 16),
@@ -250,17 +250,23 @@ class EditProfileView extends GetView<EditProfileController> {
             SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
             _buildGenderSelection(context),
             SizedBox(height: ResponsiveHelper.spacing(context, AppConstants.elementSpacing)),
-            CustDateTimePicker(
+            Obx(() => CustDateTimePicker(
               label: AppStrings.dateOfBirth,
               hint: AppStrings.dateFormat,
-              selectedDateTime: controller.dobController.text.isEmpty ? null : AppDateUtils.parseDate(controller.dobController.text),
+              selectedDateTime: controller.selectedDob.value,
               pickerType: CustDateTimePickerType.date,
+              lastDate: DateTime(
+                DateTime.now().year - 18,
+                DateTime.now().month,
+                DateTime.now().day,
+              ), // ✅ blocks any date less than 18 years ago
               onDateTimeSelected: (date) {
                 if (date != null) {
-                  controller.dobController.text = AppDateUtils.formatDate(date);
+                  controller.selectedDob.value = date;           // triggers Obx rebuild
+                  controller.dobController.text = AppDateUtils.formatDate(date); // for API
                 }
               },
-            ),
+            )),
             SizedBox(height: ResponsiveHelper.spacing(context, 16)),
             CustDropdown(
               label: AppStrings.bloodGroup, 
@@ -307,7 +313,7 @@ class EditProfileView extends GetView<EditProfileController> {
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
                   onChanged: (val) => controller.toggleSameAsCurrent(val),
-                  activeColor: AppColors.blue,
+                  activeColor: AppColors.primary,
                 )),
                 SizedBox(width: ResponsiveHelper.width(context, 8)),
                 CustText(name: AppStrings.sameAsCurrentAddress, size: 1.2, color: AppColors.textColor4),
@@ -473,16 +479,16 @@ class EditProfileView extends GetView<EditProfileController> {
           child: Container(
             padding: EdgeInsets.symmetric(vertical: ResponsiveHelper.spacing(context, 10)),
             decoration: BoxDecoration(
-              color: isSelected ? AppColors.blue.withOpacity(0.1) : Colors.white,
+              color: isSelected ? AppColors.primary.withOpacity(0.1) : Colors.white,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: isSelected ? AppColors.blue : AppColors.dividerColor2),
+              border: Border.all(color: isSelected ? AppColors.primary : AppColors.dividerColor2),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(image, height: ResponsiveHelper.height(context, 20), width: ResponsiveHelper.width(context, 20)),
                 SizedBox(width: ResponsiveHelper.width(context, 8)),
-                CustText.detailLabel(label,color:  isSelected ? AppColors.blue : AppColors.textColor4)
+                CustText.detailLabel(label,color:  isSelected ? AppColors.primary : AppColors.textColor4)
               ],
             ),
           ),
@@ -521,15 +527,15 @@ class EditProfileView extends GetView<EditProfileController> {
           child: Container(
             padding: EdgeInsets.symmetric(vertical: ResponsiveHelper.spacing(context, 10)),
             decoration: BoxDecoration(
-              color: isSelected ? AppColors.blue.withOpacity(0.1) : AppColors.white1,
+              color: isSelected ? AppColors.primary.withOpacity(0.1) : AppColors.white1,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: isSelected ? AppColors.blue : AppColors.dividerColor2),
+              border: Border.all(color: isSelected ? AppColors.primary : AppColors.dividerColor2),
             ),
             child: Center(
               child: CustText(
                 name: label, 
                 size: 1.1, 
-                color: isSelected ? AppColors.blue : AppColors.textColor4,
+                color: isSelected ? AppColors.primary : AppColors.textColor4,
                 fontWeightName: isSelected ? FontWeight.w600 : FontWeight.w400,
               ),
             ),

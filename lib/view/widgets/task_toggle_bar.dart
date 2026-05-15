@@ -52,7 +52,7 @@ class TaskToggleBar extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.blue : Colors.transparent,
+          color: isSelected ? AppColors.primary : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
         ),
         alignment: Alignment.center,

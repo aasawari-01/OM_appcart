@@ -155,7 +155,7 @@ class _LoginViewState extends State<LoginView> {
                                     child: CustText(
                                       name: AppStrings.forgotPassword,
                                       size: AppConstants.formLabelSize,
-                                      color: AppColors.blue,
+                                      color: AppColors.primary,
                                     ),
                                   ),
                                 ),

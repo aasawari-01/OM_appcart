@@ -53,7 +53,7 @@ class CustButton extends StatelessWidget {
                   end: Alignment.centerRight,
                   colors: [
                     AppColors.darkBlue2,
-                    AppColors.blue,
+                    AppColors.primary,
                   ],
                 )
               : null,

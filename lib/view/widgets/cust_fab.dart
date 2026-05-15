@@ -27,8 +27,8 @@ class CustFab extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              AppColors.gradientStart,
-              AppColors.gradientEnd,
+              AppColors.primary.withOpacity(1),
+              AppColors.primary.withOpacity(0.5),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,

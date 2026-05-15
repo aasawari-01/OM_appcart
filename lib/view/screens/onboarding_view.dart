@@ -170,7 +170,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                               size: Size.square(size),
                               painter: _RingPainter(
                                 progress: displayedProgress,
-                                color: AppColors.blue,
+                                color: AppColors.primary,
                                 strokeWidth: 3.0,
                               ),
                             ),
@@ -179,10 +179,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                               width: size * 0.72,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: AppColors.blue,
+                                color: AppColors.primary,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: AppColors.blue.withOpacity(0.35),
+                                    color: AppColors.primary.withOpacity(0.35),
                                     blurRadius: 10,
                                     spreadRadius: 1,
                                     offset: const Offset(0, 4),
@@ -215,7 +215,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
       height: 8,
       width: currentPage == index ? 20 : 8,
       decoration: BoxDecoration(
-        color: currentPage == index ? AppColors.blue : AppColors.grey,
+        color: currentPage == index ? AppColors.primary : AppColors.grey,
         borderRadius: BorderRadius.circular(12),
       ),
     );

@@ -129,7 +129,7 @@ class CustomTextField extends StatelessWidget {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(ResponsiveHelper.spacing(context, 10)),
-            borderSide: BorderSide(color: AppColors.blue),
+            borderSide: BorderSide(color: AppColors.primary),
           ),
           contentPadding: const EdgeInsets.fromLTRB(0, 10, 12, 10),
           prefix: const SizedBox(width: 10),

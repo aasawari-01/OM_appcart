@@ -1,3 +1,5 @@
+import 'colors.dart';
+
 class AppAssets {
   // Onboarding images for MetroOps app
   static const String onboarding1 = 'assets/images/onboarding1.png';
@@ -18,4 +20,8 @@ class AppAssets {
   // Profile images
   static const String profilePic = 'assets/images/drawer/profile_pic.png';
   static const String profileBg = 'assets/images/profile_BG.png';
+
+  static String icon(String fileName) {
+    return 'assets/images/drawer/${ThemeManager.current.assetFolder}/$fileName';
+  }
 }

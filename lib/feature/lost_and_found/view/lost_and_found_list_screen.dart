@@ -79,7 +79,7 @@ class LostAndFoundListScreen extends GetView<LostAndFoundListController> {
                 ElevatedButton(
                   onPressed: controller.refreshItems,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.blue,
+                    backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(
                       horizontal: ResponsiveHelper.spacing(context, 24), 
@@ -181,7 +181,7 @@ class LostAndFoundListScreen extends GetView<LostAndFoundListController> {
                         subtitleTags: [
                           TagData(
                             text: data.registerAs.toTitle(),
-                            backgroundColor: AppColors.blue.withOpacity(0.05),
+                            backgroundColor: AppColors.primary.withOpacity(0.05),
                             textColor: AppColors.textColor,
                           ),
                         ],
