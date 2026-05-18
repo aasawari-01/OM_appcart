@@ -21,30 +21,80 @@ class ApiClient {
     return Uri.parse('$normalizedBase$endpoint');
   }
 
+  // Future<http.Response> post(
+  //   String endpoint, {
+  //   Map<String, String>? headers,
+  //   Map<String, dynamic>? body,
+  //   Map<String, dynamic>? queryParameters,
+  // }) async {
+  //   var uri = _buildUri(endpoint);
+  //   if (queryParameters != null) {
+  //     uri = uri.replace(queryParameters: queryParameters);
+  //   }
+  //   final token = await AuthManager().getToken();
+  //   final mergedHeaders = <String, String>{
+  //     'Content-Type': 'application/json',
+  //     if (token != null) 'Authorization': 'Bearer $token',
+  //     if (headers != null) ...headers,
+  //   };
+  //   print("endpoint==$uri body==$body");
+  //   final encodedBody = body == null ? null : jsonEncode(body);
+  //
+  //   try {
+  //     final response = await _client
+  //         .post(uri, headers: mergedHeaders, body: encodedBody)
+  //         .timeout(const Duration(seconds: 30));
+  //     print("response===$response");
+  //     return _handleResponse(response);
+  //   } catch (e) {
+  //     print("Error during POST request to $uri: $e");
+  //     rethrow;
+  //   }
+  // }
+
+
   Future<http.Response> post(
-    String endpoint, {
-    Map<String, String>? headers,
-    Map<String, dynamic>? body,
-    Map<String, dynamic>? queryParameters,
-  }) async {
+      String endpoint, {
+        Map<String, String>? headers,
+        Map<String, dynamic>? body,
+        Map<String, dynamic>? queryParameters,
+        bool isFormData = false,
+      }) async {
     var uri = _buildUri(endpoint);
+
     if (queryParameters != null) {
       uri = uri.replace(queryParameters: queryParameters);
     }
+
     final token = await AuthManager().getToken();
+
     final mergedHeaders = <String, String>{
-      'Content-Type': 'application/json',
+      'Content-Type': isFormData
+          ? 'application/x-www-form-urlencoded'
+          : 'application/json',
       if (token != null) 'Authorization': 'Bearer $token',
       if (headers != null) ...headers,
     };
+
     print("endpoint==$uri body==$body");
-    final encodedBody = body == null ? null : jsonEncode(body);
+
+    final requestBody = body == null
+        ? null
+        : isFormData
+        ? body.map((key, value) => MapEntry(key, value.toString()))
+        : jsonEncode(body);
 
     try {
       final response = await _client
-          .post(uri, headers: mergedHeaders, body: encodedBody)
+          .post(
+        uri,
+        headers: mergedHeaders,
+        body: requestBody,
+      )
           .timeout(const Duration(seconds: 30));
-      print("response===$response");
+
+      print("response===${response.body}");
+
       return _handleResponse(response);
     } catch (e) {
       print("Error during POST request to $uri: $e");

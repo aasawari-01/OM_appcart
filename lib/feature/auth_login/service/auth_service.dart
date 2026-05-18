@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 
 import '../../../service/network_service/api_client.dart';
 import '../../../service/network_service/app_urls.dart';
+import '../model/forgot_password_response.dart';
 import '../model/login_response.dart';
 
 class AuthService {
@@ -26,20 +27,49 @@ class AuthService {
       },
     );
     final Map<String, dynamic> jsonBody =
-        jsonDecode(response.body) as Map<String, dynamic>;
-     print("response====${response.body}");
+    jsonDecode(response.body) as Map<String, dynamic>;
+    print("response====${response.body}");
     if (response.statusCode == 200) {
       return LoginResponse.fromJson(jsonBody);
     }
-     print("error==${response.statusCode}");
+    print("error==${response.statusCode}");
     final message = jsonBody['message']?.toString() ??
         jsonBody['detail']?.toString() ??
         'Unable to login. (${response.statusCode})';
     throw AuthException(message);
   }
 
-}
 
+  Future<ForgotPasswordResponse> forgotPassword({
+    required String email,
+  }) async {
+    print("email is $email");
+    final http.Response response = await _apiClient.post(
+      AppUrls.forgotPassword,
+      isFormData: true,
+      body: {
+        'email': email,
+      },
+    );
+    final Map<String, dynamic> jsonBody =
+    jsonDecode(response.body) as Map<String, dynamic>;
+
+    print("forgot password response ==== ${response.body}");
+
+    if (response.statusCode == 200) {
+      return ForgotPasswordResponse.fromJson(jsonBody);
+    }
+
+    print("error == ${response.statusCode}");
+
+    final String message = jsonBody['message']?.toString() ??
+        jsonBody['detail']?.toString() ??
+        'Unable to send reset password email. (${response.statusCode})';
+
+    throw AuthException(message);
+  }
+
+}
 
 
 

@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import '../model/forgot_password_response.dart';
 import '../service/auth_service.dart';
 import '../model/login_response.dart';
 import '../../../view/screens/tab_screen.dart';
@@ -54,6 +55,55 @@ class LoginController extends GetxController {
       
       CustomSnackBar.show(
         title: 'Login failed',
+        message: errorMessage,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+
+  Future<void> forgotPassword({
+    required String email,
+  }) async {
+    try {
+      isLoading.value = true;
+
+      final ForgotPasswordResponse result =
+      await _authService.forgotPassword(email: email);
+
+      if (result.status == true) {
+
+        Get.back();
+
+        Future.delayed(const Duration(milliseconds: 100), () {
+          CustomSnackBar.show(
+            title: 'Success',
+            message: result.message ?? 'Reset password email sent',
+            isError: false
+          );
+        });
+      } else {
+        Get.back();
+
+        Future.delayed(const Duration(milliseconds: 100), () {
+          CustomSnackBar.show(
+            title: 'Success',
+            message: result.message ?? 'Reset password email sent',
+          );
+        });
+      }
+    } catch (e) {
+      print("Forgot password error: $e");
+
+      String errorMessage = e.toString();
+
+      if (errorMessage.contains("TimeoutException")) {
+        errorMessage = "Time out error";
+      }
+
+      CustomSnackBar.show(
+        title: 'Forgot Password Failed',
         message: errorMessage,
       );
     } finally {

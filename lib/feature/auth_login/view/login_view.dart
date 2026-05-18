@@ -11,7 +11,7 @@ import '../../../view/screens/tab_screen.dart';
 import '../../../view/widgets/cust_button.dart';
 import '../../../view/widgets/cust_text.dart';
 import '../../../view/widgets/cust_textfield.dart';
-import '../../../view/screens/forgot_password_view.dart';
+import 'forgot_password_view.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});

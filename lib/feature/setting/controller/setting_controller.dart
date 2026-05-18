@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:om_appcart/feature/setting/model/change_password_resp.dart';
 
 import '../../../service/auth_manager.dart';
 import '../../../view/widgets/custom_snackbar.dart';
@@ -78,27 +79,12 @@ class SettingController extends GetxController {
         newPassword:     newPasswordController.text.trim(),
       );
 
-      Get.back();
-      Get.snackbar(
-        'Success',
-        'Password changed successfully',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: const Color(0xFF0E7D1F),
-        colorText: const Color(0xFFFFFFFF),
-        margin: const EdgeInsets.all(16),
-        borderRadius: 10,
-        duration: const Duration(seconds: 3),
-      );
+      // Get.back();
+
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        e.toString(),
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: const Color(0xFFDD3737),
-        colorText: const Color(0xFFFFFFFF),
-        margin: const EdgeInsets.all(16),
-        borderRadius: 10,
-        duration: const Duration(seconds: 3),
+      CustomSnackBar.show(
+        title: 'Failed',
+        message: 'Password change failed',
       );
     } finally {
       isLoading.value = false;
@@ -121,7 +107,7 @@ class SettingController extends GetxController {
       }
       int userId = int.parse(userIdStr);
 
-      await _settingService.changePassword(
+      final ChangePasswordResponse result =await _settingService.changePassword(
         userId: userId,
         oldPassword: currentPassword,
         newPassword: newPassword,
@@ -134,10 +120,19 @@ class SettingController extends GetxController {
 
       Get.back();
 
-      CustomSnackBar.show(
-        title: 'Success',
-        message: 'Password changed successfully',
-      );
+      if(result.status==true) {
+        CustomSnackBar.show(
+          title: 'Success',
+          message:result.message??'Password changed successfully',
+          isError: false
+        );
+      }else{
+        CustomSnackBar.show(
+          title: 'Failed',
+          message: result.message??'Password change failed',
+        );
+
+      }
     } catch (e) {
       print("Change password error: $e");
       String errorMessage = e.toString();
@@ -147,7 +142,7 @@ class SettingController extends GetxController {
 
       CustomSnackBar.show(
         title: 'Failed',
-        message: errorMessage,
+        message: 'Password change failed',
       );
     } finally {
       isLoading.value = false;

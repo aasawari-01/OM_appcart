@@ -7,6 +7,7 @@ class AppUrls {
   static const String updateUsers = 'users';
   static const String getUsers = 'users/getUser';
   static const String changePassword='users/changePassword';
+  static const String forgotPassword='mail/forgot-password';
 
 
   /// Lost & Found endpoints

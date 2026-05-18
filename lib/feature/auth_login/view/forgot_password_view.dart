@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:om_appcart/constants/colors.dart';
 
-import '../widgets/cust_button.dart';
-import '../widgets/cust_text.dart';
-import '../widgets/cust_textfield.dart';
+import '../../../view/widgets/cust_button.dart';
+import '../../../view/widgets/cust_text.dart';
+import '../../../view/widgets/cust_textfield.dart';
+import '../controller/login_controller.dart';
 
 class ForgotPasswordView extends StatefulWidget {
   const ForgotPasswordView({Key? key}) : super(key: key);
@@ -16,6 +17,7 @@ class ForgotPasswordView extends StatefulWidget {
 class _ForgotPasswordViewState extends State<ForgotPasswordView> {
   final TextEditingController emailController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final LoginController loginController = Get.put(LoginController());
 
   @override
   void dispose() {
@@ -105,8 +107,9 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                       CustButton(
                         name: "Send Reset Link",
                         size: double.infinity,
-                        onSelected: (bool val) {
+                        onSelected: (bool val) async {
                           if (_formKey.currentState?.validate() ?? false) {
+                              await loginController.forgotPassword(email: emailController.text);
 
                           }
                         },

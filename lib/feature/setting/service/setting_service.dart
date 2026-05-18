@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 
 
 import '../../../service/network_service/app_urls.dart';
+import '../model/change_password_resp.dart';
 
 class SettingService {
   SettingService({ApiClient? apiClient})
@@ -12,7 +13,7 @@ class SettingService {
 
   final ApiClient _apiClient;
 
-  Future<void> changePassword({
+  Future<ChangePasswordResponse> changePassword({
     required int userId,
     required String oldPassword,
     required String newPassword,
@@ -29,8 +30,9 @@ class SettingService {
     jsonDecode(response.body) as Map<String, dynamic>;
     print("changePassword response==== ${response.body}");
 
-    if (response.statusCode == 200) return;
-
+    if (response.statusCode == 200) {
+      return ChangePasswordResponse.fromJson(jsonBody);
+}
     print("changePassword error== ${response.statusCode}");
     final message = jsonBody['message']?.toString() ??
         jsonBody['detail']?.toString() ??
